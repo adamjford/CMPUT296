@@ -61,6 +61,14 @@ int PushCount = 0;
 int Threshold = 5;
 int HighThreshold = 8;
 
+void turnOnLED(int pin) {
+    digitalWrite(pin, HIGH);
+}
+
+void turnOffLED(int pin) {
+    digitalWrite(pin, LOW);
+}
+
 void loop() {
   if ( digitalRead(P1ButtonPin) == LOW ) {
     PushCount++;
@@ -70,17 +78,17 @@ void loop() {
   }
  
   if ( PushCount > Threshold ) {
-    digitalWrite(P1LEDLowPin, HIGH);
-    digitalWrite(P2LEDLowPin, LOW);
-    digitalWrite(LEDEvenPin, LOW);
+    turnOnLED(P1LEDLowPin);
+    turnOffLED(P2LEDLowPin);
+    turnOffLED(LEDEvenPin);
   } else if ( PushCount < (0-Threshold) ) {
-    digitalWrite(P1LEDLowPin, LOW);
-    digitalWrite(P2LEDLowPin, HIGH);
-    digitalWrite(LEDEvenPin, LOW);
+    turnOffLED(P1LEDLowPin);
+    turnOnLED(P2LEDLowPin);
+    turnOffLED(LEDEvenPin);
   } else {
-    digitalWrite(P1LEDLowPin, LOW);
-    digitalWrite(P2LEDLowPin, LOW);
-    digitalWrite(LEDEvenPin, HIGH);
+    turnOffLED(P1LEDLowPin);
+    turnOffLED(P2LEDLowPin);
+    turnOnLED(LEDEvenPin);
   }
 
   // wait 50 mS for any button bounce to die out
