@@ -18,24 +18,32 @@ currently tied, and the green LED will be on.
    
 */
 int P1LEDLowPin = 10;
+int P1LEDHighPin = 11;
 int P2LEDLowPin = 8;
+int P2LEDHighPin = 5;
 int LEDEvenPin = 9;
 
 int P1ButtonPin = 7;
 int P2ButtonPin = 6;
 
-void setup() {
-  // configure LED pins to be a digital outputs
-  pinMode(P1LEDLowPin, OUTPUT);
-  pinMode(P2LEDLowPin, OUTPUT);
-  pinMode(LEDEvenPin, OUTPUT);
+void configureLEDPinToBeDigitalOutput(int pin) {
+  pinMode(pin, OUTPUT);
+}
 
-  // set button pins to INPUT and 
-  // turn on internal pull up resistor 
-  pinMode(P1ButtonPin, INPUT);
-  digitalWrite(P1ButtonPin, HIGH);
-  pinMode(P2ButtonPin, INPUT);
-  digitalWrite(P2ButtonPin, HIGH);
+void setButtonPinToInput(int pin) {
+  pinMode(pin, INPUT);
+  digitalWrite(pin, HIGH);
+}
+
+void setup() {
+  configureLEDPinToBeDigitalOutput(P1LEDLowPin);
+  configureLEDPinToBeDigitalOutput(P1LEDHighPin);
+  configureLEDPinToBeDigitalOutput(P2LEDLowPin);
+  configureLEDPinToBeDigitalOutput(P2LEDHighPin);
+  configureLEDPinToBeDigitalOutput(LEDEvenPin);
+
+  setButtonPinToInput(P1ButtonPin);
+  setButtonPinToInput(P2ButtonPin);
 }
 
 /* PushCount is incremented when player 1 pushes their
@@ -51,6 +59,7 @@ int PushCount = 0;
 */
 
 int Threshold = 5;
+int HighThreshold = 8;
 
 void loop() {
   if ( digitalRead(P1ButtonPin) == LOW ) {
