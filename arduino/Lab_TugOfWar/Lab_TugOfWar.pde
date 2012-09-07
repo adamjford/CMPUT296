@@ -81,14 +81,26 @@ void loop() {
     turnOnLED(P1LEDLowPin);
     turnOffLED(P2LEDLowPin);
     turnOffLED(LEDEvenPin);
+    if ( PushCount > HighThreshold ) {
+      turnOnLED(P1LEDHighPin);
+    } else {
+      turnOffLED(P1LEDHighPin);
+    }
   } else if ( PushCount < (0-Threshold) ) {
     turnOffLED(P1LEDLowPin);
     turnOnLED(P2LEDLowPin);
     turnOffLED(LEDEvenPin);
+    if ( PushCount < (0-HighThreshold) ) {
+      turnOnLED(P2LEDHighPin);
+    } else {
+      turnOffLED(P2LEDHighPin);
+    }
   } else {
     turnOffLED(P1LEDLowPin);
     turnOffLED(P2LEDLowPin);
     turnOnLED(LEDEvenPin);
+    turnOffLED(P1LEDHighPin);
+    turnOffLED(P2LEDHighPin);
   }
 
   // wait 50 mS for any button bounce to die out
