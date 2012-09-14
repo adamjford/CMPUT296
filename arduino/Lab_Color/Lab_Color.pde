@@ -43,8 +43,7 @@ serial monitor using the printMeasurement procedure.
 
 */
 
-int senseColor(
-  int redOut, int greenOut, int blueOut, int sampleDelay) 
+int senseColor(int redOut, int greenOut, int blueOut, int sampleDelay) 
 {
   int intensity;
   
@@ -62,6 +61,11 @@ int senseColor(
   
   intensity = 1024 - analogRead(SensorPin);
   
+  return intensity;
+}
+
+int senseColorAndPrint(int redOut, int greenOut, int blueOut, int currentNoise, int sampleDelay) {
+  int intensity = senseColor(redOut, greenOut, blueOut, sampleDelay) - currentNoise;
   printMeasurement(redOut, greenOut, blueOut, intensity);
   
   return intensity;
@@ -72,8 +76,7 @@ to print the red, green, blue values set for the LED and
 the measured intensity.
 */
 
-void printMeasurement(int red, int green, int blue, 
-int intensity) {
+void printMeasurement(int red, int green, int blue, int intensity) {
   Serial.print("RGB LED input values: ");
   Serial.print(red, DEC);
   Serial.print(", ");
@@ -82,7 +85,7 @@ int intensity) {
   Serial.print(blue, DEC);
   Serial.print(". Intensity: ");
   Serial.println(intensity, DEC);
-  }
+}
 
 void setup() {
     pinMode(RedPin, OUTPUT);
@@ -92,6 +95,7 @@ void setup() {
     Serial.begin(9600);
 }
 
+
 void loop() {
   int redIn;
   int greenIn;
@@ -100,11 +104,26 @@ void loop() {
 
   int sampleDelay = 1000;
   
-  redIn = senseColor(255, 0, 0, sampleDelay);
-  greenIn = senseColor(0, 255, 0, sampleDelay);
-  blueIn = senseColor(0, 0, 255, sampleDelay);
+  int noise = senseColor(0, 0, 0, sampleDelay);
+  Serial.print("Current noise value: ");
+  Serial.println(noise);
+ 
+  redIn = senseColorAndPrint(255, 0, 0, noise, sampleDelay);
+  greenIn = senseColorAndPrint(0, 255, 0, noise, sampleDelay);
+  blueIn = senseColorAndPrint(0, 0, 255, noise, sampleDelay);
+  noise = senseColor(0, 0, 0, sampleDelay);
 
-  blackIn = senseColor(0, 0, 0, sampleDelay);
+  Serial.print("Paper colour guess: ");
+  if (noise > 200) {
+    Serial.println("None");
+  } else if (abs(greenIn, blueIn) < 20 && (greenIn > redIn || blueIn > redIn )) {
+    Serial.println("Blue");
+  } else if (blueIn > redIn && redIn > greenIn) {
+    Serial.println("Red");
+  } else {
+    Serial.println("Green");
+  }
+
 
   Serial.println(" ");
   delay(2000);
