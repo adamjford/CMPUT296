@@ -41,11 +41,10 @@ uint32_t pow_mod(uint32_t b, uint32_t e, uint32_t m)
   b = b % m;
 
   for (uint32_t i = 0; i < e; i++) {
-    result = result % m;
-    result *= b;
+    result = (result * b) % m;
   }
 
-  return result % m;
+  return result;
 }
   
 /* 
