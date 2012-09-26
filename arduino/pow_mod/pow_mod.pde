@@ -8,18 +8,21 @@ void loop()
   uint32_t b, e, m;
   
   b = readlong();
+  Serial.print("b=");
   Serial.print(b);
   Serial.print(" ");
   
   e = readlong();
+  Serial.print("e=");
   Serial.print(e);
   Serial.print(" ");
   
   m = readlong();
+  Serial.print("m=");
   Serial.print(m);
   Serial.print("\n");
  
-  Serial.print("answer = ");  
+  Serial.print("answer: ");  
   Serial.println(pow_mod(b, e, m));
 }
  
@@ -31,7 +34,18 @@ void loop()
 */
 uint32_t pow_mod(uint32_t b, uint32_t e, uint32_t m)
 {
-  return 0;
+  if (b == 0) return 0;
+
+  uint32_t result = 1;
+
+  b = b % m;
+
+  for (uint32_t i = 0; i < e; i++) {
+    result = result % m;
+    result *= b;
+  }
+
+  return result % m;
 }
   
 /* 
@@ -65,13 +79,10 @@ void readline(char *s, int bufsize)
   uint8_t i = 0;
   
   while( i < bufsize-1 ) {
-    // wait for a character 
     while (Serial.available() == 0) { } /* Do nothing */
  
-    // grab the character and save in the buffer
     s[i] = Serial.read();
  
-    // if end of line or somehow a \0 got sent, we are done
     if (s[i] == '\n' || s[i] == '\0') break;
     i += 1;
   }
