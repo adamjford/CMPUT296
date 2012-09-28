@@ -39,6 +39,55 @@ void displayYourSharedSecret(uint16_t privateSecret) {
   Serial.println(sharedSecret);
 }
 
+/* 
+    Read a sequence characters from the serial monitor and interpret
+    them as a decimal integer.
+ 
+    The characters can be leading and tailing blanks, a leading '-',
+    and the digits 0-9.
+ 
+    Return that number as a 32 bit int.
+    Source: Tangle Computing Notes - 7. Diffie-Hellman Key Exchange
+*/
+int32_t readlong()
+{
+  char s[128]; /* 128 characters should be more than enough. */
+  readline(s, 128);
+  return atol(s);
+}
+ 
+/* 
+    Read a \n terminated line from the serial monitor and store the result 
+    in string s.
+ 
+    String s has maximum size, including the terminating \0, of bufsize
+    characters.  If the input line is longer than can be stored in s, then
+    it is truncated.  bufsize must be at least 1.
+ 
+    s will always be a properly terminted string.
+    Source: Tangle Computing Notes - 7. Diffie-Hellman Key Exchange
+*/
+void readline(char *s, int bufsize)
+{
+  uint8_t i = 0;
+  
+  while( i < bufsize-1 ) {
+    while (Serial.available() == 0) { } /* Do nothing */
+ 
+    s[i] = Serial.read();
+ 
+    if (s[i] == '\n' || s[i] == '\0') break;
+    i += 1;
+  }
+  // \0 teminate the string
+  s[i] = '\0';
+}
+
+uint16_t readInOtherSharedSecret() {
+  Serial.println("Input other shared secret: ");
+  return readlong();
+}
+
 void setup() {
   Serial.begin(9600);
 
