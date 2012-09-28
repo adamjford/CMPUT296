@@ -21,9 +21,14 @@ void loop()
   Serial.print("m=");
   Serial.print(m);
   Serial.print("\n");
- 
   Serial.print("answer: ");  
-  Serial.println(pow_mod(b, e, m));
+
+  uint32_t time = micros();
+  uint32_t result = pow_mod(b, e, m);
+  time = micros() - time;
+  Serial.println(result);
+  Serial.print("Time taken: ");
+  Serial.println(time);
 }
  
 // common functions and procedures
