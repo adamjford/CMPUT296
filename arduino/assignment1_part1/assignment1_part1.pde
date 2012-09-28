@@ -1,3 +1,4 @@
+uint16_t privateSecret;
 uint16_t encryptionKey;
 uint16_t p = 19211;
 uint16_t g = 6;
@@ -88,14 +89,18 @@ uint16_t readInOtherSharedSecret() {
   return readlong();
 }
 
+uint16_t computeSharedSecretEncryptionKey(uint16_t sharedIndex) {
+  return pow_mod(sharedIndex, privateSecret, p);
+}
+
 void setup() {
   Serial.begin(9600);
 
-  uint16_t privateSecret = getRandom();
+  privateSecret = getRandom();
   displayYourSharedSecret(privateSecret);
 
   uint16_t sharedIndex = readInOtherSharedSecret();
-  encryptionKey = computeSharedEncryptionKey(sharedIndex);
+  encryptionKey = computeSharedSecretEncryptionKey(sharedIndex);
 }
 
 void loop() {
