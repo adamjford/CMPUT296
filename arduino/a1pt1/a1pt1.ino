@@ -1,3 +1,13 @@
+/*  CMPUT 296/114 - Assignment 1 Part 1 - Due 2012-10-02
+
+    Version 1.1 2012-09-29
+
+    By: Adam Ford
+
+    This assignment is a solo effort, and
+    any extra resources are cited in the code below.
+
+*/
 uint16_t privateSecret;
 uint16_t encryptionKey;
 uint16_t p = 19211;
@@ -18,6 +28,7 @@ uint16_t getRandom(){
 /*
     Compute and return (b ** e) mod m
     For unsigned b, e, m and m > 0
+    Source: class discussions
 */
 uint32_t pow_mod(uint32_t b, uint32_t e, uint32_t m)
 {
@@ -48,7 +59,7 @@ void displayYourSharedSecret(uint16_t privateSecret) {
     and the digits 0-9.
  
     Return that number as a 32 bit int.
-    Source: Tangle Computing Notes - 7. Diffie-Hellman Key Exchange
+    Source: Tangible Computing Notes - 7. Diffie-Hellman Key Exchange
 */
 int32_t readlong()
 {
@@ -66,7 +77,7 @@ int32_t readlong()
     it is truncated.  bufsize must be at least 1.
  
     s will always be a properly terminted string.
-    Source: Tangle Computing Notes - 7. Diffie-Hellman Key Exchange
+    Source: Tangible Computing Notes - 7. Diffie-Hellman Key Exchange
 */
 void readline(char *s, int bufsize)
 {
@@ -86,23 +97,43 @@ void readline(char *s, int bufsize)
 
 uint16_t readInOtherSharedSecret() {
   Serial.println("Input other shared secret: ");
-  return readlong();
+  uint16_t otherSharedSecret = readlong();
+  Serial.print("Other shared secret: ");
+  Serial.println(otherSharedSecret);
+  return otherSharedSecret;
 }
 
 uint16_t computeSharedSecretEncryptionKey(uint16_t sharedIndex) {
   return pow_mod(sharedIndex, privateSecret, p);
 }
 
+/* Source: Tangible Computing Notes */
+uint16_t encryptOrDecrypt(uint16_t value, uint16_t key) {
+  return value ^ key;
+}
+
 void setup() {
   Serial.begin(9600);
+  Serial1.begin(9600);
 
   privateSecret = getRandom();
   displayYourSharedSecret(privateSecret);
 
   uint16_t sharedIndex = readInOtherSharedSecret();
   encryptionKey = computeSharedSecretEncryptionKey(sharedIndex);
+
+  Serial.println("Waiting for input...");
 }
 
+/* Source: Tangible Computing Notes */
 void loop() {
-  
+  if (Serial1.available()) {
+    int16_t inByte = Serial1.read();
+    Serial.write(encryptOrDecrypt(inByte, encryptionKey));
+  }
+  if (Serial.available()) {
+    int16_t inByte = Serial.read();
+    Serial1.write(encryptOrDecrypt(inByte, encryptionKey));
+  }
 }
+
