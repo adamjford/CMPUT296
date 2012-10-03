@@ -24,7 +24,7 @@ void loop()
   Serial.print("answer: ");  
 
   uint32_t time = micros();
-  uint32_t result = pow_mod(b, e, m);
+  uint32_t result = pow_mod_v2(b, e, m);
   time = micros() - time;
   Serial.println(result);
   Serial.print("Time taken: ");
@@ -37,30 +37,20 @@ void loop()
     Compute and return (b ** e) mod m
     For unsigned b, e, m and m > 0
 */
-uint32_t pow_mod(uint32_t b, uint32_t e, uint32_t m)
+uint32_t pow_mod_v2(uint32_t b, uint32_t e, uint32_t m)
 {
   if (b == 0) return 0;
-
+  uint32_t v = b % m;
   uint32_t result = 1;
 
-  b = b % m;
-
-  for (uint32_t i = 0; i < e; i++) {
-    result = (result * b) % m;
-  }
-
-  return result;
-}
-
-uint32_t pow_mod_k(uint32_t b, uint32_t k, uint32_t m)
-{
-  if (b == 0) return 0;
-
-  uint32_t v = b % m;
-
-  for (uint32_t i = 0; i < k; i++) {
+  for (uint32_t i = 0; e >> i; i++) {
+    uint32_t mask = ((uint32_t)1) << i;
+    if (e & mask) { /* Check the i'th bit */
+      result = (result * v) % m;
+    }
     v = (v * v) % m;
   }
+
 
   return result;
 }
