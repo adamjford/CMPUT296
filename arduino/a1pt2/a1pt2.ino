@@ -7,7 +7,7 @@
 
 */
 uint16_t privateSecret;
-uint16_t encryptionKey;
+uint16_t sharedSecret;
 uint32_t p = 2147483647;
 uint32_t g = 16807;
 
@@ -160,20 +160,31 @@ void setup() {
   Serial.print("Your shared index: ");
   Serial.println(yourSharedIndex);
 
-  encryptionKey = computeSharedSecretEncryptionKey(yourSharedIndex);
+  sharedSecret = computeSharedSecretEncryptionKey(yourSharedIndex);
 
   Serial.println("Waiting for input...");
 }
 
 /* Source: Tangible Computing Notes */
 void loop() {
-  if (Serial1.available()) {
-    int16_t inByte = Serial1.read();
-    Serial.write(encryptOrDecrypt(inByte, encryptionKey));
+  while (Serial1.available()) {
+    randomSeed(sharedSecret);
+    char character;
+    do {
+      uint8_t encryptionKey = random(0xFF);
+      character = encryptOrDecrypt(Serial1.read(), encryptionKey);
+      Serial.write(character);
+    } while (character != '\n');
   }
-  if (Serial.available()) {
-    int16_t inByte = Serial.read();
-    Serial1.write(encryptOrDecrypt(inByte, encryptionKey));
+
+  while (Serial.available()) {
+    randomSeed(sharedSecret);
+    char character;
+    do {
+      uint8_t encryptionKey = random(0xFF);
+      character = encryptOrDecrypt(Serial.read(), encryptionKey);
+      Serial1.write(character);
+    } while (character != '\n');
   }
 }
 
