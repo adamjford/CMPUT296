@@ -13,7 +13,7 @@ uint32_t g = 16807;
 
 /* Function returns 16bit random number, uses empty analog pin 0. */ 
 /* Source: Timothy Put, CMPUT296 Discussion Forum */ 
-uint16_t getRandom(){
+uint16_t getRandom() {
   uint16_t randomBytes = 0;
   for(int i=0; i <= 15; i++) {
     randomBytes = randomBytes << 1;
@@ -67,7 +67,7 @@ uint32_t computeSharedSecretEncryptionKey(uint32_t sharedIndex) {
 }
 
 /* Source: Tangible Computing Notes */
-uint8_t encryptOrDecrypt(uint8_t value, uint8_t key) {
+uint8_t encryptOrDecrypt(uint8_t value, uint16_t key) {
   return value ^ key;
 }
 
