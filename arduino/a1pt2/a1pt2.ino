@@ -37,9 +37,26 @@ uint32_t pow_mod(uint32_t b, uint32_t e, uint32_t m)
   for (uint32_t i = 0; e >> i; i++) {
     uint32_t mask = ((uint32_t)1) << i;
     if (e & mask) { /* Check the i'th bit */
-      result = (result * v) % m;
+      result = mul_mod(result, v, m);
     }
-    v = (v * v) % m;
+    v = mul_mod(v, v, m);
+  }
+
+  return result;
+}
+
+uint32_t mul_mod(uint32_t a, uint32_t b, uint32_t m) {
+  uint32_t result = 0;
+
+  if(a && b && m) {
+    uint32_t v = b % m;
+    for (uint32_t i = 0; a >> i; i++) {
+      uint32_t mask = ((uint32_t)1) << i;
+      if (a & mask) {
+        result = (result + v) % m;
+      }
+      v = (v << 1) % m;
+    }
   }
 
   return result;
