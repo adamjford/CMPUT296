@@ -31,13 +31,15 @@ uint16_t getRandom(){
 uint32_t pow_mod(uint32_t b, uint32_t e, uint32_t m)
 {
   if (b == 0) return 0;
-
+  uint32_t v = b % m;
   uint32_t result = 1;
 
-  b = b % m;
-
-  for (uint32_t i = 0; i < e; i++) {
-    result = (result * b) % m;
+  for (uint32_t i = 0; e >> i; i++) {
+    uint32_t mask = ((uint32_t)1) << i;
+    if (e & mask) { /* Check the i'th bit */
+      result = (result * v) % m;
+    }
+    v = (v * v) % m;
   }
 
   return result;
@@ -113,7 +115,14 @@ uint16_t encryptOrDecrypt(uint16_t value, uint16_t key) {
 void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
-
+ 
+  /*
+    Use a digital output to show program is ready for input?
+    Don't use digital output 13!!
+    DO10 -> DI11
+    DO11 <- DI10
+  */
+  
   privateSecret = getRandom();
   displayYourSharedSecret(privateSecret);
 

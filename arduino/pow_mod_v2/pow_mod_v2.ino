@@ -51,7 +51,6 @@ uint32_t pow_mod_v2(uint32_t b, uint32_t e, uint32_t m)
     v = (v * v) % m;
   }
 
-
   return result;
 }
   
