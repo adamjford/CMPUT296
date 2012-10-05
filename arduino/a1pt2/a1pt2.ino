@@ -62,56 +62,12 @@ uint32_t mul_mod(uint32_t a, uint32_t b, uint32_t m) {
   return result;
 }
 
-/* 
-    Read a sequence characters from the serial monitor and interpret
-    them as a decimal integer.
- 
-    The characters can be leading and tailing blanks, a leading '-',
-    and the digits 0-9.
- 
-    Return that number as a 32 bit int.
-    Source: Tangible Computing Notes - 7. Diffie-Hellman Key Exchange
-*/
-int32_t readlong()
-{
-  char s[128]; /* 128 characters should be more than enough. */
-  readline(s, 128);
-  return atol(s);
-}
- 
-/* 
-    Read a \n terminated line from the serial monitor and store the result 
-    in string s.
- 
-    String s has maximum size, including the terminating \0, of bufsize
-    characters.  If the input line is longer than can be stored in s, then
-    it is truncated.  bufsize must be at least 1.
- 
-    s will always be a properly terminted string.
-    Source: Tangible Computing Notes - 7. Diffie-Hellman Key Exchange
-*/
-void readline(char *s, int bufsize)
-{
-  uint8_t i = 0;
-  
-  while( i < bufsize-1 ) {
-    while (Serial.available() == 0) { } /* Do nothing */
- 
-    s[i] = Serial.read();
- 
-    if (s[i] == '\n' || s[i] == '\0') break;
-    i += 1;
-  }
-  // \0 teminate the string
-  s[i] = '\0';
-}
-
-uint16_t computeSharedSecretEncryptionKey(uint16_t sharedIndex) {
+uint32_t computeSharedSecretEncryptionKey(uint32_t sharedIndex) {
   return pow_mod(sharedIndex, privateSecret, p);
 }
 
 /* Source: Tangible Computing Notes */
-uint16_t encryptOrDecrypt(uint16_t value, uint16_t key) {
+uint8_t encryptOrDecrypt(uint8_t value, uint8_t key) {
   return value ^ key;
 }
 
@@ -171,7 +127,7 @@ void loop() {
     randomSeed(sharedSecret);
     char character;
     do {
-      uint8_t encryptionKey = random(0xFF);
+      uint8_t encryptionKey = random(0x100);
       character = encryptOrDecrypt(Serial1.read(), encryptionKey);
       Serial.write(character);
     } while (character != '\n');
@@ -181,7 +137,7 @@ void loop() {
     randomSeed(sharedSecret);
     char character;
     do {
-      uint8_t encryptionKey = random(0xFF);
+      uint8_t encryptionKey = random(0x100);
       character = encryptOrDecrypt(Serial.read(), encryptionKey);
       Serial1.write(character);
     } while (character != '\n');
