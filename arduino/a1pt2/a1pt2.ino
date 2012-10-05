@@ -74,9 +74,9 @@ uint8_t encryptOrDecrypt(uint8_t value, uint16_t key) {
 void sendMySharedIndex(uint32_t sharedIndex) {
   uint32_t mask = 0xFF;
   Serial1.write(sharedIndex & mask);
-  Serial1.write((sharedIndex << 8) & mask);
-  Serial1.write((sharedIndex << 16) & mask);
-  Serial1.write((sharedIndex << 24) & mask);
+  Serial1.write((sharedIndex >> 8) & mask);
+  Serial1.write((sharedIndex >> 16) & mask);
+  Serial1.write((sharedIndex >> 24) & mask);
 }
 
 uint32_t readYourSharedIndex() {
@@ -84,7 +84,7 @@ uint32_t readYourSharedIndex() {
     /* Wait until all bytes of 32-bit shared index are available */
   }
 
-  return Serial1.read() | Serial1.read() << 8 | Serial1.read() << 16 | Serial1.read() << 24;
+  return ((uint32_t)Serial1.read()) | (((uint32_t)Serial1.read()) << 8) | (((uint32_t)Serial1.read()) << 16) | (((uint32_t)Serial1.read()) << 24);
 }
 
 int digitalOutput = 10;
@@ -109,12 +109,12 @@ void setup() {
   privateSecret = getRandom();
   uint32_t sharedIndex = pow_mod(g, privateSecret, p);
   Serial.print("My shared index: ");
-  Serial.println(sharedIndex);
+  Serial.println(sharedIndex, HEX);
 
   sendMySharedIndex(sharedIndex);
   uint32_t yourSharedIndex = readYourSharedIndex();
   Serial.print("Your shared index: ");
-  Serial.println(yourSharedIndex);
+  Serial.println(yourSharedIndex, HEX);
 
   sharedSecret = computeSharedSecretEncryptionKey(yourSharedIndex);
 
