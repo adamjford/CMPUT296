@@ -8,8 +8,8 @@
 */
 uint16_t privateSecret;
 uint16_t encryptionKey;
-uint32_t p = 19211;
-uint32_t g = 6;
+uint32_t p = 2147483647;
+uint32_t g = 16807;
 
 /* Function returns 16bit random number, uses empty analog pin 0. */ 
 /* Source: Timothy Put, CMPUT296 Discussion Forum */ 
@@ -62,12 +62,6 @@ uint32_t mul_mod(uint32_t a, uint32_t b, uint32_t m) {
   return result;
 }
 
-void displayYourSharedSecret(uint16_t privateSecret) {
-  uint16_t sharedSecret = pow_mod(g, privateSecret, p);
-  Serial.print("My shared secret: ");
-  Serial.println(sharedSecret);
-}
-
 /* 
     Read a sequence characters from the serial monitor and interpret
     them as a decimal integer.
@@ -112,14 +106,6 @@ void readline(char *s, int bufsize)
   s[i] = '\0';
 }
 
-uint16_t readInOtherSharedSecret() {
-  Serial.println("Input other shared secret: ");
-  uint16_t otherSharedSecret = readlong();
-  Serial.print("Other shared secret: ");
-  Serial.println(otherSharedSecret);
-  return otherSharedSecret;
-}
-
 uint16_t computeSharedSecretEncryptionKey(uint16_t sharedIndex) {
   return pow_mod(sharedIndex, privateSecret, p);
 }
@@ -129,22 +115,52 @@ uint16_t encryptOrDecrypt(uint16_t value, uint16_t key) {
   return value ^ key;
 }
 
+void sendMySharedIndex(uint32_t sharedIndex) {
+  uint32_t mask = 0xFF;
+  Serial1.write(sharedIndex & mask);
+  Serial1.write((sharedIndex << 8) & mask);
+  Serial1.write((sharedIndex << 16) & mask);
+  Serial1.write((sharedIndex << 24) & mask);
+}
+
+uint32_t readYourSharedIndex() {
+  while(Serial1.available() < 4) {
+    /* Wait until all bytes of 32-bit shared index are available */
+  }
+
+  return Serial1.read() | Serial1.read() << 8 | Serial1.read() << 16 | Serial1.read() << 24;
+}
+
+int digitalOutput = 10;
+int digitalInput = 11;
+
 void setup() {
   Serial.begin(9600);
   Serial1.begin(9600);
- 
-  /*
-    Use a digital output to show program is ready for input?
-    Don't use digital output 13!!
-    DO10 -> DI11
-    DO11 <- DI10
-  */
-  
-  privateSecret = getRandom();
-  displayYourSharedSecret(privateSecret);
+  pinMode(digitalOutput, OUTPUT);
+  pinMode(digitalInput, INPUT);
 
-  uint16_t sharedIndex = readInOtherSharedSecret();
-  encryptionKey = computeSharedSecretEncryptionKey(sharedIndex);
+  digitalWrite(digitalOutput, HIGH);
+
+  Serial.println("Waiting for other device to be ready...");
+
+  while(!digitalRead(digitalInput)) {
+    /* Wait for other device to signal that they are ready */
+  }
+  
+  Serial.println("Other device found!");
+
+  privateSecret = getRandom();
+  uint32_t sharedIndex = pow_mod(g, privateSecret, p);
+  Serial.print("My shared index: ");
+  Serial.println(sharedIndex);
+
+  sendMySharedIndex(sharedIndex);
+  uint32_t yourSharedIndex = readYourSharedIndex();
+  Serial.print("Your shared index: ");
+  Serial.println(yourSharedIndex);
+
+  encryptionKey = computeSharedSecretEncryptionKey(yourSharedIndex);
 
   Serial.println("Waiting for input...");
 }
