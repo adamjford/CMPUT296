@@ -100,11 +100,13 @@ void setup() {
 
   Serial.println("Waiting for other device to be ready...");
 
-  while(!digitalRead(digitalInput)) {
+  while(digitalRead(digitalInput) != HIGH) {
     /* Wait for other device to signal that they are ready */
   }
   
   Serial.println("Other device found!");
+
+  digitalWrite(digitalOutput, LOW);
 
   privateSecret = getRandom();
   uint32_t sharedIndex = pow_mod(g, privateSecret, p);
