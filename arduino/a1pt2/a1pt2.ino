@@ -123,29 +123,37 @@ void setup() {
 
 /* Source: Tangible Computing Notes */
 void loop() {
-
-  while (Serial1.available()) {
+  if (Serial1.available()) {
+    //Serial.println("Resetting random seed...");
     randomSeed(sharedSecret);
     char character;
-    uint8_t encryptionKey = random(0x100);
-    character = encryptOrDecrypt(Serial1.read(), encryptionKey);
-    Serial.write(character);
-    if(character == '\n')
-    {
-      randomSeed(sharedSecret);
-    }
+    do {
+      while (!Serial1.available()) { }
+      uint8_t decryptionKey = random(0x100);
+      //Serial.print("Decryption key:");
+      //Serial.println(decryptionKey);
+      character = Serial1.read();
+      character = encryptOrDecrypt(character, decryptionKey);
+      Serial.print(character);
+    } while (character != '\n' && character != '\0');
   }
   
-  while (Serial.available()) {
+  if (Serial.available()) {
+    //Serial.println("Resetting random seed...");
     randomSeed(sharedSecret);
     char character;
-    uint8_t encryptionKey = random(0x100);
-    character = encryptOrDecrypt(Serial.read(), encryptionKey);
-    Serial1.write(character);
-    if(character == '\n')
-    {
-      randomSeed(sharedSecret);
-    }
+    do {
+      //Serial.println("Waiting for character...");
+      while (!Serial.available()) { }
+      uint8_t encryptionKey = random(0x100);
+      //Serial.print("Encryption key:");
+      //Serial.println(encryptionKey);
+      character = Serial.read();
+      //Serial.print("Character to encrypt:");
+      //Serial.println(character);
+      Serial1.write(encryptOrDecrypt(character, encryptionKey));
+    } while (character != '\n' && character != '\0');
+    //Serial.println("Done writing.");
   }
 }
 
