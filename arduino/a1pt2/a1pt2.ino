@@ -123,24 +123,29 @@ void setup() {
 
 /* Source: Tangible Computing Notes */
 void loop() {
+
   while (Serial1.available()) {
     randomSeed(sharedSecret);
     char character;
-    do {
-      uint8_t encryptionKey = random(0x100);
-      character = encryptOrDecrypt(Serial1.read(), encryptionKey);
-      Serial.write(character);
-    } while (character != '\n');
+    uint8_t encryptionKey = random(0x100);
+    character = encryptOrDecrypt(Serial1.read(), encryptionKey);
+    Serial.write(character);
+    if(character == '\n')
+    {
+      randomSeed(sharedSecret);
+    }
   }
-
+  
   while (Serial.available()) {
     randomSeed(sharedSecret);
     char character;
-    do {
-      uint8_t encryptionKey = random(0x100);
-      character = encryptOrDecrypt(Serial.read(), encryptionKey);
-      Serial1.write(character);
-    } while (character != '\n');
+    uint8_t encryptionKey = random(0x100);
+    character = encryptOrDecrypt(Serial.read(), encryptionKey);
+    Serial1.write(character);
+    if(character == '\n')
+    {
+      randomSeed(sharedSecret);
+    }
   }
 }
 
