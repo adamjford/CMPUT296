@@ -4,8 +4,8 @@
 
     This assignment is a solo effort, and
     any extra resources are cited in the code below.
-
 */
+
 uint16_t privateSecret;
 uint16_t sharedSecret;
 uint32_t p = 2147483647;
