@@ -4,6 +4,12 @@
 
     This assignment is a solo effort, and
     any extra resources are cited in the code below.
+
+    Wiring instructions (Left Arduino <--> Right Arduino)
+    PWM 10  <-> PWM 11
+    PWM 11  <-> PWM 10
+    RX1     <-> TX1
+    TX1     <-> RX1
 */
 
 uint16_t privateSecret;
@@ -45,6 +51,12 @@ uint32_t pow_mod(uint32_t b, uint32_t e, uint32_t m)
   return result;
 }
 
+/*
+    Compute and return (a * b) mod m
+    For unsigned b, e, m 
+    m > 0; a, b & m all must be at most 31 bits long
+    Source: class discussions and worksheet
+*/
 uint32_t mul_mod(uint32_t a, uint32_t b, uint32_t m) {
   uint32_t result = 0;
 
@@ -71,6 +83,7 @@ uint8_t encryptOrDecrypt(uint8_t value, uint16_t key) {
   return value ^ key;
 }
 
+// Source: class discussions
 void sendMySharedIndex(uint32_t sharedIndex) {
   uint32_t mask = 0xFF;
   Serial1.write(sharedIndex & mask);
@@ -79,6 +92,7 @@ void sendMySharedIndex(uint32_t sharedIndex) {
   Serial1.write((sharedIndex >> 24) & mask);
 }
 
+// Source: class discussions
 uint32_t readYourSharedIndex() {
   while(Serial1.available() < 4) {
     /* Wait until all bytes of 32-bit shared index are available */
@@ -123,17 +137,13 @@ void setup() {
   Serial.println("Waiting for input...");
 }
 
-/* Source: Tangible Computing Notes */
 void loop() {
   if (Serial1.available()) {
-    //Serial.println("Resetting random seed...");
     randomSeed(sharedSecret);
     char character;
     do {
       while (!Serial1.available()) { }
       uint8_t decryptionKey = random(0x100);
-      //Serial.print("Decryption key:");
-      //Serial.println(decryptionKey);
       character = Serial1.read();
       character = encryptOrDecrypt(character, decryptionKey);
       Serial.print(character);
@@ -141,21 +151,14 @@ void loop() {
   }
   
   if (Serial.available()) {
-    //Serial.println("Resetting random seed...");
     randomSeed(sharedSecret);
     char character;
     do {
-      //Serial.println("Waiting for character...");
       while (!Serial.available()) { }
       uint8_t encryptionKey = random(0x100);
-      //Serial.print("Encryption key:");
-      //Serial.println(encryptionKey);
       character = Serial.read();
-      //Serial.print("Character to encrypt:");
-      //Serial.println(character);
       Serial1.write(encryptOrDecrypt(character, encryptionKey));
     } while (character != '\n' && character != '\0');
-    //Serial.println("Done writing.");
   }
 }
 
