@@ -1,0 +1,39 @@
+Quiz 6
+
+
+Question 1:
+Put your answers to Question 1 directly into this source file.
+
+In the directory merge_sort is a fully instrumented version of
+merge sort based on the code we talked about in class.  Suppose
+that you are sorting an array of length n, and each element of the
+array is of size s bytes.
+
+Part 1 [2 marks]: Suppose that we have k bytes of available memory.  
+What is the largest array of n elements, each element of size s bytes,
+that we can possibly sort?
+
+Part 2 [3 marks ]: Every time we make a recursive call to merge_sort
+the stack increases by a small amount on entry.  
+
+What is this amount? 
+
+15.
+
+Why is it constant?
+
+Because it's the memory used by the various instrumenting calls (Serial.print(), mem_info(), etc) and the split_point variable, which do not vary based upon the parameters of merge_sort().
+
+Do we have to concern ourselves with the amount of memory used
+by the stack in the merge_sort?  That is, could we ever run out
+of space on the stack before we would run out of space on the heap?
+
+
+Question 2:
+Put your answers to Question 2 Part 2 directly into this source file,
+and include your imerge_sort.cpp as the answer to Part 1.
+
+Part 1 [4 marks]: Complete the code for indexed_merged_sort
+
+Part 2 [1 mark]: What happens if you forget to initialize Index prior to
+calling indexed_merge_sort?

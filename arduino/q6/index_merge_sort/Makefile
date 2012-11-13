@@ -1,8 +1,8 @@
-TARGET = mergesort
+TARGET = assignment2
 
 # Place your Arduino libs here! It's okay to not define this.
 ARDUINO_LIBS = SPI Adafruit_GFX Adafruit_ST7735 \
-	Adafruit_SD Adafruit_SD/utility SD/utility UAUtils
+	Adafruit_SD Adafruit_SD/utility SD/utility
 
 # Either set this here or type `make upload BOARD_TAG=uno`
 BOARD_TAG = mega2560 
