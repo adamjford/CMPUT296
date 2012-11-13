@@ -149,7 +149,6 @@ void indexed_merge_sort(element_t Original[],
 
     indexed_merge_sort(Original, Index, split_point);
     indexed_merge_sort(Original, Index+split_point, Original_len-split_point);
-    // ***** missing code here *****
 
     // don't need the merging array S until this point
     uint16_t *S = (uint16_t *) malloc( Original_len * sizeof(uint16_t) );
@@ -157,7 +156,6 @@ void indexed_merge_sort(element_t Original[],
     assert_malloc_ok(S, "Cannot get merge buffer");
 
     // merge the left and right
-    // ***** missing code here *****
     indexed_merge(Original, Index, split_point, Index+split_point, Original_len-split_point, S);
 
     for (int i=0; i < Original_len; i++) {
@@ -189,9 +187,11 @@ void setup() {
 
     // establish the original Index mapping
     
+    if(0) {
     for (int16_t i=0; i < Test_len; i++) {
         Index[i] = i;
         }
+    }
     indexed_merge_sort(Test, Index, Test_len);
     
     Serial.print("Out: ");

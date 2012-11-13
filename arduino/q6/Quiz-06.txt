@@ -13,6 +13,9 @@ Part 1 [2 marks]: Suppose that we have k bytes of available memory.
 What is the largest array of n elements, each element of size s bytes,
 that we can possibly sort?
 
+
+
+
 Part 2 [3 marks ]: Every time we make a recursive call to merge_sort
 the stack increases by a small amount on entry.  
 
@@ -22,11 +25,12 @@ What is this amount?
 
 Why is it constant?
 
-Because it's the memory used by the various instrumenting calls (Serial.print(), mem_info(), etc) and the split_point variable, which do not vary based upon the parameters of merge_sort().
+Because it's the memory used by the various instrumenting calls (Serial.print(), mem_info(), etc), the A_len variable and the split_point variable, which do not vary based upon the parameters of merge_sort().
 
 Do we have to concern ourselves with the amount of memory used
 by the stack in the merge_sort?  That is, could we ever run out
 of space on the stack before we would run out of space on the heap?
+
 
 
 Question 2:
@@ -37,3 +41,5 @@ Part 1 [4 marks]: Complete the code for indexed_merged_sort
 
 Part 2 [1 mark]: What happens if you forget to initialize Index prior to
 calling indexed_merge_sort?
+
+The Index array's elements will be pointing at spots of memory that could have any arbitrary value in them as opposed to pointing at integers that line up to the indexes of elements in the Test array.
