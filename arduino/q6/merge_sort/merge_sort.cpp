@@ -189,7 +189,7 @@ void setup() {
     mem_info("********* THIS IS THE BEGINNING *********");
     randomSeed(analogRead(0));
 
-    int16_t Test_len = 256;
+    int16_t Test_len = 1024;
     int16_t Test[Test_len];
 
     Serial.print("In: ");
