@@ -131,20 +131,72 @@ int main(int argc, char *argv[]) {
     removeElement(qp);
   }
 
+  addElement(qp, e1);
+  printf("Test 5.1: ");
+  printf_queue(qp);
+  printf("\n");
+
+  /* length should have gone up by one */
+
+  if ( length(qp) != 1 ) {
+    printf("Test 5.1 failed, length %d should be 1 before deletion\n", 
+        length(qp));
+    tests_failed++;
+  }
+  else {
+    deleteElement(qp, 0);
+    if( length(qp) != 0) {
+      printf("Test 5.1 failed, length %d should be 0 after deletion\n", 
+          length(qp));
+      tests_failed++;
+    } else {
+      printf("Test 5.1 passed.\n");
+      tests_passed++;
+    }
+  }
+
+  removeElement(qp);
+
+  printf("Test 5.2: ");
+  for (int i=1; i <= 10; i++) {
+    addElement(qp, i);
+  }
+
+  printf_queue(qp);
+  printf("\n");
+
+  deleteElement(qp, 4);
+  deleteElement(qp, 4);
+
+  if( length(qp) != 8) {
+    printf("Test 5.2 failed, length %d should be 8 after deletion\n", 
+        length(qp));
+    tests_failed++;
+  } else {
+    if(getElement(qp, 4) != 6) {
+      printf("Test 5.2 failed, element at index 4 should have a value of 6 after deletion\n");
+      tests_failed++;
+    } else {
+      printf("Test 5.2 passed.");
+      tests_passed++;
+    }
+  }
 
   /* fatal tests */
   if ( 0 ) {
     int expected5 = getElement(qp, 0);
 
     if(expected5 != 0) {
-      printf("Test 5 failed, an non-existent element should be 0 but was %d\n", expected5);
+      printf("Test 6 failed, an non-existent element should be 0 but was %d\n", expected5);
       tests_failed++;
     } else {
-      printf("Test 5 passed.\n");
+      printf("Test 6 passed.\n");
       tests_passed++;
     }
+  }
 
-    printf("Test 6: remove on empty queue\n");
+  if ( 0 ) {
+    printf("Test 7: remove on empty queue\n");
     e2 = removeElement(qp);
     tests_failed++;
   }
