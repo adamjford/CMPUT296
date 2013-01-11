@@ -84,5 +84,9 @@ int length(queue *q) {
 }
 
 int getElement(queue *q, int index) {
-  return 42;
+  assert(q->length > 0);
+  
+  int actualIndex = (q->head_index + index) % q->max_length;
+
+  return q->list[actualIndex];
 }
