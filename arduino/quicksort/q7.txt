@@ -1,0 +1,9 @@
+Q1:
+
+The value returned by partition: 3
+
+Resulting list: 3 2 1 4 5 9 7 11 13
+
+Q2: 3 and 5.
+
+Q3: log_2(n) is slower in big-O notation.
