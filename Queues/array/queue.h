@@ -33,7 +33,9 @@ typedef struct {
 } queue;
 
 void initializeQueue(queue *q, int size_hint);
+int length(queue *q);
 void addElement(queue *q, int val);
 int removeElement(queue *q);
+int getElement(queue *q, int index);
 
 #endif
