@@ -5,48 +5,38 @@
 /*
    print the contents of a queue from head to tail going left 
    to right.
-
-NOTE:  This code is fragile as it inspects the internal 
-representation of the queue.
-
-*/
-void printf_queue(queue *qp) {
-  for (int i=0; i < length(qp); i++) {
-    printf("%d ", getElement(qp, i));
+   */
+void q_printf(queue q) {
+  for (int i=0; i < q_length(q); i++) {
+    printf("%d ", q_get_item(q, i));
   }
 }
+
 
 int main(int argc, char *argv[]) {
   /* test harness */
   int tests_passed = 0;
   int tests_failed = 0;
 
-  /* create a queue instance and initialize it */ 
-  queue q_instance;
-
-  /* create a handle to the queue so that we can manipulate it
-     without having to put the & in front all the time */
-
-  queue *qp = &q_instance;
-
-  printf("Initializing queue\n");
-  initializeQueue(qp, 5);
+  /* create a queue with a size hint */
+  printf("Creating queue\n");
+  queue qp = q_create(20);
 
   /* how do we see if queue was propery initialized? */
 
   /* add and remove one element */
   int e1 = 42;
 
-  addElement(qp, e1);
+  q_add(qp, e1);
   printf("Test 1: ");
-  printf_queue(qp);
+  q_printf(qp);
   printf("\n");
 
   /* length should have gone up by one */
 
-  if ( length(qp) != 1 ) {
+  if ( q_length(qp) != 1 ) {
     printf("Test 1 failed, length %d should be 1\n", 
-        length(qp));
+        q_length(qp));
     tests_failed++;
   }
   else {
@@ -56,13 +46,13 @@ int main(int argc, char *argv[]) {
 
 
   printf("Test 2: ");
-  int e2 = removeElement(qp);
-  printf_queue(qp);
+  int e2 = q_remove(qp);
+  q_printf(qp);
   printf("\n");
 
-  if ( length(qp) != 0 ) {
+  if ( q_length(qp) != 0 ) {
     printf("Test 2.1 failed, length %d should be 0\n", 
-        length(qp));
+        q_length(qp));
     tests_failed++;
   }
   else {
@@ -82,15 +72,15 @@ int main(int argc, char *argv[]) {
 
   printf("Test 3: ");
   for (int i=1; i <= 10; i++) {
-    addElement(qp, i);
+    q_add(qp, i);
   }
-  printf_queue(qp);
+  q_printf(qp);
   printf("\n");
   for (int i=1; i<= 10; i++) {
-    e1 = removeElement(qp);
-    if ( length(qp) != 10-i ) {
+    e1 = q_remove(qp);
+    if ( q_length(qp) != 10-i ) {
       printf("Test 3.1 failed, length %d should be %d\n",
-          length(qp), 10-i);
+          q_length(qp), 10-i);
       tests_failed++;
     }
     else {
@@ -106,17 +96,18 @@ int main(int argc, char *argv[]) {
     }
   }
 
+
   printf("Test 4: ");
   for (int i=1; i <= 10; i++) {
-    addElement(qp, i);
+    q_add(qp, i);
   }
 
-  printf_queue(qp);
+  q_printf(qp);
   printf("\n");
 
   for (int i=0; i < 10; i++) {
     int expected = i + 1;
-    int actual = getElement(qp, i);
+    int actual = q_get_item(qp, i);
     if(expected != actual) {
       printf("Test 4 failed, element #%d should be %d but was %d\n",
           i, expected, actual);
@@ -128,26 +119,26 @@ int main(int argc, char *argv[]) {
 
   // Reset to empty
   for (int i=1; i <= 10; i++) {
-    removeElement(qp);
+    q_remove(qp);
   }
 
-  addElement(qp, e1);
+  q_add(qp, e1);
   printf("Test 5.1: ");
-  printf_queue(qp);
+  q_printf(qp);
   printf("\n");
 
   /* length should have gone up by one */
 
-  if ( length(qp) != 1 ) {
+  if ( q_length(qp) != 1 ) {
     printf("Test 5.1 failed, length %d should be 1 before deletion\n", 
-        length(qp));
+        q_length(qp));
     tests_failed++;
   }
   else {
-    int actual = deleteElement(qp, 0);
-    if( length(qp) != 0) {
+    int actual = q_delete_item(qp, 0);
+    if( q_length(qp) != 0) {
       printf("Test 5.1 failed, length %d should be 0 after deletion\n", 
-          length(qp));
+          q_length(qp));
       tests_failed++;
     } else if(actual != e1) {
       printf("Test 5.1 failed, element retrieved from deleted: Expected: %d; Actual: %d\n", 
@@ -161,38 +152,38 @@ int main(int argc, char *argv[]) {
 
   printf("Test 5.2: ");
   for (int i=1; i <= 10; i++) {
-    addElement(qp, i);
+    q_add(qp, i);
   }
 
-  printf_queue(qp);
+  q_printf(qp);
   printf("\n");
 
   int deletedElement;
 
-  deletedElement = deleteElement(qp, 4);
+  deletedElement = q_delete_item(qp, 4);
   if(deletedElement != 5) {
     printf("Test 5.2 failed, element retrieved from deleted: Expected: 5; Actual: %d\n", 
         deletedElement);
     tests_failed++;
   }
 
-  deletedElement = deleteElement(qp, 4);
+  deletedElement = q_delete_item(qp, 4);
   if(deletedElement != 6) {
     printf("Test 5.2 failed, element retrieved from deleted: Expected: 6; Actual: %d\n", 
         deletedElement);
     tests_failed++;
   }
 
-  printf_queue(qp);
+  q_printf(qp);
   printf("\n");
 
-  if( length(qp) != 8) {
+  if( q_length(qp) != 8) {
     printf("Test 5.2 failed, length %d should be 8 after deletion\n", 
-        length(qp));
+        q_length(qp));
     tests_failed++;
   } else {
-    if(getElement(qp, 4) != 7) {
-      printf("Test 5.2 failed, value of element at index 4 after deletion: Expected: 7; Actual: %d\n", getElement(qp, 4));
+    if(q_get_item(qp, 4) != 7) {
+      printf("Test 5.2 failed, value of element at index 4 after deletion: Expected: 7; Actual: %d\n", q_get_item(qp, 4));
       tests_failed++;
     } else {
       printf("Test 5.2 passed.\n");
@@ -200,22 +191,10 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  /* fatal tests */
+  /* a fatal test */
   if ( 0 ) {
-    int expected5 = getElement(qp, 0);
-
-    if(expected5 != 0) {
-      printf("Test 6 failed, an non-existent element should be 0 but was %d\n", expected5);
-      tests_failed++;
-    } else {
-      printf("Test 6 passed.\n");
-      tests_passed++;
-    }
-  }
-
-  if ( 0 ) {
-    printf("Test 7: remove on empty queue\n");
-    e2 = removeElement(qp);
+    printf("Test 4: remove on empty queue\n");
+    e2 = q_remove(qp);
     tests_failed++;
   }
 

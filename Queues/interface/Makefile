@@ -6,7 +6,8 @@ all : testq
 queue.o : queue.c queue.h
 
 # testq also depends on the queue library
-testq : queue.o 
+testq : testq.c queue.o 
+	$(CC) $(CFLAGS) testq.c queue.o -o testq
 
 clean :
 	rm -f queue.o testq
