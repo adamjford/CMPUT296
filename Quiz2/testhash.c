@@ -15,22 +15,22 @@ void lookup_test(hashtable ht, int test_id) {
 
 /* our test data */
 student_info students[] = { 
-  { 451241, "Marjorie G. Smith", "B+" },
-  { 519244, "Michael P. Anderson", "C", },
-  { 129426, "Ben E. Harrison", "A-" }, 
-  { 743295, "William A. Leslie", "B-" },
-  { 623599, "Brenda M. Crumble", "A+" },
-  { 195151, "Mary M. Toney", "A-" },
-  { 435324, "Markus G. Smith", "B+" },
-  { 519246, "Cassandra P. Anderson", "C", },
-  { 129425, "Foo B. Bar", "A-" }, 
-  { 743299, "Leslie A. Williams", "B-" },
-  { 623593, "Norah M. Stumble", "A+" }
+  { 151240, "Marjorie G. Smith", "B+" },
+  { 219241, "Michael P. Anderson", "C", },
+  { 329422, "Ben E. Harrison", "A-" }, 
+  { 443290, "William A. Leslie", "B-" },
+  { 523591, "Brenda M. Crumble", "A+" },
+  { 695152, "Mary M. Toney", "A-" },
+  { 735320, "Markus G. Smith", "B+" },
+  { 812341, "Cassandra P. Anderson", "C", },
+  { 929422, "Foo B. Bar", "A-" }, 
+  { 143320, "Leslie A. Williams", "B-" },
+  { 223591, "Norah M. Stumble", "A+" }
 };
 int num_students = 12;
 
 int test_ids[] = {
-  195151, 519244, 666222,
+  151240, 523591, 223591,
 };
 int num_test_ids = 3;
 
@@ -61,11 +61,11 @@ void test_delete() {
   if(ht_lookup(ht, test_student.id, &lookup) == 0 || lookup.id != test_student.id) {
     printf("FAILED -- Insert failed to properly insert student\n");
   } else {
-    ht_delete(ht, 0);
+    ht_delete(ht, test_student.id);
     if(ht_lookup(ht, test_student.id, &lookup) != 0) {
       printf("FAILED -- Delete did not remove student from hashtable\n");
     } else {
-      printf("Passed");
+      printf("Passed\n");
     }
   }
 
@@ -83,11 +83,11 @@ void test_delete() {
   if(ht_lookup(ht, test_student.id, &lookup) == 0 || lookup.id != test_student.id) {
     printf("FAILED -- Insert failed to properly insert student\n");
   } else {
-    ht_delete(ht, 1);
+    ht_delete(ht, test_student.id);
     if(ht_lookup(ht, test_student.id, &lookup) != 0) {
       printf("FAILED -- Delete did not remove student from hashtable\n");
     } else {
-      printf("Passed");
+      printf("Passed\n");
     }
   }
 
@@ -105,11 +105,11 @@ void test_delete() {
   if(ht_lookup(ht, test_student.id, &lookup) == 0 || lookup.id != test_student.id) {
     printf("FAILED -- Insert failed to properly insert student\n");
   } else {
-    ht_delete(ht, 3);
+    ht_delete(ht, test_student.id);
     if(ht_lookup(ht, test_student.id, &lookup) != 0) {
       printf("FAILED -- Delete did not remove student from hashtable\n");
     } else {
-      printf("Passed");
+      printf("Passed\n");
     }
   }
 }

@@ -148,7 +148,5 @@ void ht_delete(hashtable ht, int id) {
       cur = cur->next;
     }
   }
-
-  // could not find it
 }
 
