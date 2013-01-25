@@ -76,12 +76,18 @@ def tonum(digits, base):
     >>> tonum([1, 1, 1, 1, 1, 1], 1)
     6
 
+    >>> tonum([], 1)
+    0
+
+    >>> tonum(None, 1)
+    0
+
     >>> tonum([1, 2], 2)
     Traceback (most recent call last):
     ...
     Exception: Invalid digit for base 2: 2
 
-    >>> tonum([1, 0], 1)
+    >>> tonum([0], 1)
     Traceback (most recent call last):
     ...
     Exception: Invalid digit for base 1: 0
@@ -95,10 +101,11 @@ def tonum(digits, base):
 
     result = 0
 
-    for digit in digits:
-        if (base == 1 and digit != 1) or (base != 1 and digit >= base):
-          raise Exception("Invalid digit for base " + str(base) + ": " + str(digit))
-        result = result*base + int(digit)
+    if digits is not None:
+      for digit in digits:
+          if (base == 1 and digit != 1) or (base != 1 and digit >= base):
+            raise Exception("Invalid digit for base " + str(base) + ": " + str(digit))
+          result = result*base + int(digit)
     return result
 
 def tobin(x):
