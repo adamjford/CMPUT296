@@ -1,6 +1,8 @@
 class Dict:
   """
   Data structure that stores key-value pairs and allow querying based on key.
+  
+  Key must be an integer.
 
   >>> d = Dict(5)
   >>> d.len()
@@ -20,31 +22,56 @@ class Dict:
   """
   
   def __init__(self, size_hint):
-    self.keys = []
-    self.values = []
+    self.buckets = []
+    for i in range(size_hint):
+      self.buckets.append([ [], [] ])
+
+    self.length = 0
+
+  def _hash(self, key):
+    """
+    Return the hash index for key.
+    >>> d = Dict(5)
+    >>> d._hash(3)
+    1
+    >>> d._hash(-2)
+    0
+    >>> d._hash(0)
+    3
+    >>> d._hash(7)
+    0
+    """
+    #return key % len(self.buckets)
+    h = 0
+    for c in str(key):
+      h += ord(c)
+    return h % len(self.buckets)
 
   def len(self):
     """
     Returns the number of items in the dictionary.
     """
-    return len(self.keys)
+    return self.length
 
   def insert(self, key, value):
     """
     Inserts key-value pair into the dictionary.
     """
     try:
-      self.values[self.keys.index(key)] = value
+      keys, values = self.buckets[self._hash(key)]
+      values[keys.index(key)] = value
     except ValueError:
-      self.keys.append(key)
-      self.values.append(value)
+      keys.append(key)
+      values.append(value)
+      self.length += 1
 
   def lookup(self, key):
     """
     Returns the value associated with key. Or raises KeyError if key is not in the dictionary.
     """
+    keys, values = self.buckets[self._hash(key)]
     try:
-      return self.values[self.keys.index(key)]
+      return values[keys.index(key)]
     except ValueError:
       raise KeyError('key not found')
 
