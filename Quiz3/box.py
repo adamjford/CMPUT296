@@ -86,6 +86,7 @@ class Box:
         >>> b.collidesWith(b)
         True
 
+        >>> b = Box(10, 15, 30, 45)
         >>> b1 = Box(11, 10, 20, 20)
         >>> b.collidesWith(b1)
         True
@@ -102,6 +103,12 @@ class Box:
         >>> b3.collidesWith(b1)
         False
         >>> b1.collidesWith(b3)
+        False
+
+        >>> b4 = Box(31, 15, 46, 45)
+        >>> b.collidesWith(b4)
+        False
+        >>> b4.collidesWith(b)
         False
 
         >>> u1 = b.unionWith(b2)
@@ -139,7 +146,21 @@ class Box:
         self.yb += dy;
 
     def contains(self, x, y):
-        return x >= self.xl and x <= self.xr and y >= self.yt and y <= self.yb
+        return (x >= self.xl and 
+                x <= self.xr and 
+                y >= self.yt and 
+                y <= self.yb)
+
+    def collidesWith(self, b1):
+        return (self.contains(b1.xl, b1.yt) or
+                self.contains(b1.xl, b1.yb) or
+                self.contains(b1.xr, b1.yt) or
+                self.contains(b1.xr, b1.yb) or
+                b1.contains(self.xl, self.yt) or
+                b1.contains(self.xl, self.yb) or
+                b1.contains(self.xr, self.yt) or
+                b1.contains(self.xr, self.yb))
+
 
 # to run tests do:
 # python3 box.py -v
