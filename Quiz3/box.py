@@ -133,13 +133,10 @@ class Box:
         self.yb = yb
 
     def moveBy(self, dx, dy):
-        """
         self.xl += dx;
         self.xr += dx;
         self.yt += dy;
         self.yb += dy;
-        """
-        pass
 
     def contains(self, x, y):
         return x >= self.xl and x <= self.xr and y >= self.yt and y <= self.yb
