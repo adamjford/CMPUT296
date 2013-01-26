@@ -43,6 +43,7 @@ class Box:
     NOTE: intersectWith is an optional bonus method.
 
 
+        b = Box(xl, yt, xr, yb)
         >>> b = Box(10, 15, 30, 45)
         
         >>> b.contains(11, 20)
@@ -107,11 +108,16 @@ class Box:
     """
 
     def __init__(self, xl, yt, xr, yb):
-        pass
+        self.xl = xl
+        self.yt = yt
+        self.xr = xr
+        self.yb = yb
 
     def moveBy(self, dx, dy):
         pass
-    
+
+    def contains(self, x, y):
+        return x >= self.xl and x <= self.xr and y >= self.yt and y <= self.yb
 
 # to run tests do:
 # python3 box.py -v
