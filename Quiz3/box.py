@@ -64,6 +64,25 @@ class Box:
         >>> b.contains(30, 45)
         True
 
+        >>> b.moveBy(5, 10)
+        >>> [b.xl, b.yt, b.xr, b.yb]
+        [15, 25, 35, 55]
+
+        >>> b.moveBy(0, 0)
+        >>> [b.xl, b.yt, b.xr, b.yb]
+        [15, 25, 35, 55]
+
+        >>> b.contains(11, 20)
+        False
+
+        >>> b.moveBy(1, 0)
+        >>> [b.xl, b.yt, b.xr, b.yb]
+        [16, 25, 36, 55]
+
+        >>> b.moveBy(0, 2)
+        >>> [b.xl, b.yt, b.xr, b.yb]
+        [16, 27, 36, 57]
+
         >>> b.collidesWith(b)
         True
 
@@ -114,6 +133,12 @@ class Box:
         self.yb = yb
 
     def moveBy(self, dx, dy):
+        """
+        self.xl += dx;
+        self.xr += dx;
+        self.yt += dy;
+        self.yb += dy;
+        """
         pass
 
     def contains(self, x, y):
