@@ -17,6 +17,8 @@ def neighbours_of(G, v):
     True
     >>> neighbours_of(G, 3) == { 1 }
     True
+    >>> neighbours_of(G, 1) 
+    {3, 2}
     """
     (V, E) = G
     neighbours = set()
@@ -40,32 +42,43 @@ def generate_random_graph(n, m):
         
     return (V, E)
 
-def remove_loops(path):
-    """
-    >>> remove_loops([1, 2, 6, 2, 3, 2, 6, 4])
-    [1, 2, 6, 4]
-    >>> remove_loops([1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 10])
-    [1, 10]
-    """
-    new_path = []
+n = 20
+m = 5
 
-    while len(path) > 0:
-        x = path.pop(0)
-        #print("x = {}".format(x))
-        if not x in path:
-            new_path.append(x)
-            #print("x not duplicated. New path is now: {}".format(new_path))
-        else:
-            #print("x is duplicated. Finding last instance...")
-            y = None
-            while x in path:
-                #print("y = {}".format(y))
-                y = path.pop(0)
-            new_path.append(y)
-            #print("Last instance of x found. New path is now: {}".format(new_path))
+G = generate_random_graph(n, m)
+(V, E) = G
 
-    return new_path
+print(G)
+print("Number of edges is {}, we want {}".format(len(E), m))
 
+start = random.choice(list(V))
+stop = random.choice(list(V))
+
+cur = start
+
+print("Starting at {}".format(cur))
+if len(neighbours_of(G, cur)) == 0:
+    raise Exception("Bad luck, {} has no neighbours".format(cur))
+
+num_steps = 0
+max_num_steps = 1000
+
+while cur != stop and num_steps < max_num_steps:
+    num_steps += 1
+
+    # pick a neighbour of cur at random
+    neighbours = neighbours_of(G, cur)
+    # print(neighbours)
+    # pick one of the neighbours
+    # cur = random.sample(neighbours, 1)[0]
+    # or
+    cur = random.choice(list(neighbours))
+    print("At {}".format(cur))
+
+print("Finished at {}".format(cur))
+
+"""
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+"""
