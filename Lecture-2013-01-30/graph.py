@@ -42,6 +42,8 @@ def generate_random_graph(n, m):
 
 def remove_loops(path):
     """
+    >>> remove_loops([1, 2, 3, 4])
+    [1, 2, 3, 4]
     >>> remove_loops([1, 2, 6, 2, 3, 2, 6, 4])
     [1, 2, 6, 4]
     >>> remove_loops([1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 10])
@@ -51,20 +53,37 @@ def remove_loops(path):
 
     while len(path) > 0:
         x = path.pop(0)
-        #print("x = {}".format(x))
+
         if not x in path:
             new_path.append(x)
-            #print("x not duplicated. New path is now: {}".format(new_path))
         else:
-            #print("x is duplicated. Finding last instance...")
             y = None
-            while x in path:
-                #print("y = {}".format(y))
+            while x in path: 
                 y = path.pop(0)
             new_path.append(y)
-            #print("Last instance of x found. New path is now: {}".format(new_path))
 
     return new_path
+
+def compress(walk):
+    """
+    >>> compress([1, 2, 3, 4])
+    [1, 2, 3, 4]
+    >>> compress([1, 2, 6, 2, 3, 2, 6, 4])
+    [1, 2, 6, 4]
+    >>> compress([1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1, 10])
+    [1, 10]
+    """
+    lasttime = {}
+    for (i,v) in enumerate(walk):
+        lasttime[v] = i
+
+    rv = []
+    i = 0
+    while (i < len(walk)):
+        rv.append(walk[i])
+        i = lasttime[walk[i]]+1
+
+    return rv
 
 if __name__ == "__main__":
     import doctest
