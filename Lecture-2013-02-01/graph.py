@@ -165,6 +165,29 @@ def compress(walk):
 
     return rv
 
+def spanning_edges(G, start):
+    """
+    >>> G = random_graph(10, 10)
+    >>> spanning_edges(G, 0)
+    """
+    visited = set()
+    todo = [(start, None)]
+    span = set()
+
+    while todo:
+        (cur, e) = todo.pop()
+
+        if cur in visited: continue
+
+        visited.add(cur)
+        if e: span.add(e)
+
+        for n in G.adj_to(cur):
+            if n not in visited:
+                todo.append((n, (cur, n)))
+
+    return span
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
