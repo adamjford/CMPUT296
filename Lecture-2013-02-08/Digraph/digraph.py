@@ -78,8 +78,6 @@ class DiGraph:
     def draw(self, filename, attr = {}):
         """
         Draws the graph into a dot file.
-
-        Unimplemented.
         """
         display.write_dot_desc((self._adjsets.keys(), self.edges()), filename, attr)
 
