@@ -3,29 +3,29 @@ Graph module for undirected graphs.
 """
 
 import random
-#import display
+import display
 
-class Graph:
+class DiGraph:
     """
-    Undirected graph.
+    Directed graph.
 
     The vertices must be comparable and immutable.
 
-    The edge (1, 2) is the same as the edge (2, 1).
+    The edge (1, 2) is NOT the same as the edge (2, 1).
     """
 
     def __init__(self):
         self._adjsets = {}
 
     def __repr__(self):
-        return "Graph({})".format(self._adjsets)
+        return "DiGraph({})".format(self._adjsets)
 
     def add_vertex(self, v):
         """
-        >>> G = Graph()
+        >>> G = DiGraph()
         >>> G.add_vertex(1)
         >>> G
-        Graph({1}, set())
+        DiGraph({1: set([])})
         """
         if v not in self._adjsets:
             self._adjsets[v] = set()
@@ -34,14 +34,14 @@ class Graph:
         """
         Adds an edge to graph.  If vertices in the edge do not exist, it adds them.
 
-        >>> G = Graph()
+        >>> G = DiGraph()
         >>> G.add_vertex(1)
         >>> G.add_vertex(2)
         >>> G.add_edge((1, 2))
         >>> G.add_edge((2, 1))
         >>> G.add_edge((1, 3))
         >>> G.num_edges()
-        2
+        3
         >>> G.num_vertices()
         3
         """
@@ -51,13 +51,29 @@ class Graph:
 
         # Add the edge
         self._adjsets[e[0]].add(e[1])
-        self._adjsets[e[1]].add(e[0])
 
     def edges(self):
         """
         Returns the set of edges in the graph as ordered tuples.
+        >>> G = DiGraph()
+        >>> G.add_vertex(1)
+        >>> G.add_vertex(2)
+        >>> G.add_edge((1, 3))
+        >>> G.add_edge((2, 1))
+        >>> G.add_edge((1, 2))
+        >>> G.edges()
+        set([(1, 2), (1, 3), (2, 1)])
+        >>> G.add_vertex(4)
+        >>> G.edges()
+        set([(1, 2), (1, 3), (2, 1)])
         """
-        pass
+        edges = set()
+
+        for key, values in self._adjsets.iteritems():
+            for v in values:
+                edges.add((key, v))
+
+        return set(sorted(edges))
 
     def draw(self, filename, attr = {}):
         """
@@ -65,14 +81,13 @@ class Graph:
 
         Unimplemented.
         """
-        #display.write_dot_desc((self._adjsets.keys(), self.edges()), filename, attr)
-        pass
+        display.write_dot_desc((self._adjsets.keys(), self.edges()), filename, attr)
 
     def num_edges(self):
         m = 0
         for v in self._adjsets:
             m += len(self._adjsets[v])
-        return m // 2
+        return m
 
     def num_vertices(self):
         """
@@ -82,16 +97,19 @@ class Graph:
 
     def adj_to(self, v):
         """
-        Returns neighbors of v.
+        Returns all vertices directly accessible from v.
 
-        >>> G = Graph()
+        >>> G = DiGraph()
         >>> for v in [1, 2, 3]: G.add_vertex(v)
         >>> G.add_edge((1, 2))
+        >>> G.add_edge((2, 1))
         >>> G.add_edge((1, 3))
         >>> G.adj_to(1) == { 2, 3 }
         True
-        >>> G.adj_to(3) == { 1 }
+        >>> G.adj_to(2) == { 1 }
         True
+        >>> G.adj_to(3) == { 1 }
+        False
         """
         return self._adjsets[v]
 
@@ -109,11 +127,11 @@ def random_graph(n, m):
         ...
     ValueError: For 1 vertices, you want 1 edges, but can only have a maximum of 0
     """
-    G = Graph()
+    G = DiGraph()
     for v in range(n):
         G.add_vertex(v)
 
-    max_num_edges = n * (n-1) // 2
+    max_num_edges = n * (n-1)
     if m > max_num_edges:
         raise ValueError("For {} vertices, you want {} edges, but can only have a maximum of {}".format(n, m, max_num_edges))
 
@@ -122,15 +140,15 @@ def random_graph(n, m):
 
     return G
 
-def spanning_tree(G, start):  
-    """ 
+def spanning_tree(G, start):
+    """
     n vertices
     m edges
     """
     visited = set()
     todo = [ (start, None) ]
 
-    T = Graph()
+    T = DiGraph()
 
     while todo:
         (cur, e) = todo.pop(0)
@@ -168,8 +186,6 @@ def compress(walk):
         i = lasttime[walk[i]]+1
 
     return rv
-
-
 
 if __name__ == "__main__":
     import doctest
