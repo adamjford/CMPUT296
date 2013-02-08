@@ -1,5 +1,5 @@
 # an extension to the graph module that generates .dot files for graphviz
-import graph
+import digraph
 import time
 import sys
 
