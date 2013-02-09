@@ -220,7 +220,20 @@ def shortest_path(G, source, dest):
     """
     Returns the shortest path from vertex source to vertex dest.
 
+    >>> G = Digraph()
+    >>> shortest_path(G, 1, 2)
+    []
+    >>> G = Digraph([(1, 2)])
+    >>> path = shortest_path(G, 1, 2)
+    >>> path
+    [1, 2]
+    >>> G.is_path(path)
+    True
     >>> G = Digraph([(1, 2), (2, 3), (3, 4), (4, 5), (1, 6), (3, 6), (6, 7)])
+    >>> path = shortest_path(G, 1, 7)
+    >>> path
+    [1, 6, 7]
+    >>> G = Digraph([(1, 2), (2, 3), (3, 4), (4, 5), (6, 1), (3, 6), (6, 7)])
     >>> path = shortest_path(G, 1, 7)
     >>> path
     [1, 6, 7]
