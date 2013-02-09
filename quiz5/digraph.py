@@ -135,13 +135,36 @@ class Digraph:
         Returns True if the list of vertices in the argument path are a
         valid path in the graph.  Returns False otherwise.
 
+        >>> G = Digraph()
+        >>> G.is_path([1, 2])
+        False
+        >>> G.add_edge((1,2))
+        >>> G.is_path([1, 2])
+        True
+        >>> G.is_path([2, 1])
+        False
         >>> G = Digraph([(1, 2), (2, 3), (2, 4), (1, 5), (2, 5), (4, 5), (5, 2)])
         >>> G.is_path([1, 5, 2, 4, 5])
         True
         >>> G.is_path([1, 5, 4, 2])
         False
         """
-        pass
+
+        if path is None: return False
+
+        for i in range(len(path)-1):
+            current = path[i]
+            next = path[i+1]
+
+            try:
+                toset = self._tosets[current]
+            except KeyError:
+                return False
+
+            if next not in toset:
+                return False
+
+        return True
 
 def random_graph(n, m):
     """
