@@ -40,8 +40,9 @@ class Digraph:
 
         >>> G = Digraph()
         >>> G.add_vertex(1)
-        >>> G
-        Digraph({1}, set())
+        >>> tcompare(G.vertices(), {1})
+        True
+
         """
         if v not in self._tosets:
             self._tosets[v] = set()
@@ -109,8 +110,8 @@ class Digraph:
         >>> for v in [1, 2, 3]: G.add_vertex(v)
         >>> G.add_edge((1, 3))
         >>> G.add_edge((1, 2))
-        >>> G.adj_to(3)
-        set()
+        >>> tcompare(G.adj_to(3), set())
+        True
         >>> G.adj_to(1) == { 2, 3 }
         True
         """
@@ -123,8 +124,8 @@ class Digraph:
         >>> G = Digraph()
         >>> G.add_edge((1, 3))
         >>> G.add_edge((2, 3))
-        >>> G.adj_from(1)
-        set()
+        >>> tcompare(G.adj_from(1), set())
+        True
         >>> G.adj_from(3) == { 1, 2 }
         True
         """
@@ -218,7 +219,10 @@ def spanning_tree(G, start):
 
 def shortest_path(G, source, dest):
     """
-    Returns the shortest path from vertex source to vertex dest.
+    Returns the shortest path from vertex source to vertex dest
+    using a breadth-first search.
+
+    Returns an empty list if no path was found.
 
     >>> G = Digraph()
     >>> shortest_path(G, 1, 2)
@@ -233,14 +237,49 @@ def shortest_path(G, source, dest):
     >>> path = shortest_path(G, 1, 7)
     >>> path
     [1, 6, 7]
-    >>> G = Digraph([(1, 2), (2, 3), (3, 4), (4, 5), (6, 1), (3, 6), (6, 7)])
+    >>> G = Digraph([(1, 2), (2, 3), (3, 4), (4, 5), (6, 1), (6, 7)])
     >>> path = shortest_path(G, 1, 7)
     >>> path
-    [1, 6, 7]
-    >>> G.is_path(path)
-    True
+    []
     """
-    pass
+
+    visited = set()
+    todo = [ (source, None) ]
+
+    T = []
+
+    dest_found = False
+
+    while todo:
+        (cur, e) = todo.pop(0)
+
+        if cur in visited: continue
+
+        visited.add(cur)
+        if e:
+            T.append(e)
+            if cur == dest:
+                dest_found = True
+                break
+
+        try:
+            for n in G.adj_to(cur):
+                if n not in visited:
+                    todo.append((n, (cur, n)))
+        except KeyError:
+            return []
+
+    if not dest_found: return []
+
+    path = [dest]
+
+    # goes backwards through the tree to
+    # build the path from source to dest
+    for (v1, v2) in reversed(T):
+        if v2 == path[0]:
+            path.insert(0, v1)
+
+    return path
 
 def compress(walk):
     """
@@ -266,7 +305,21 @@ def compress(walk):
     return rv
 
 
+def tcompare(expect, got):
+    """
+    A compare function that uses the lazy vaulation of or to return True
+    or an error string.
+
+    Source: Dr. Hoover, on the forums
+
+    >>> tcompare(1, 1)
+    True
+    >>> tcompare(1, 2)
+    "Compare failed, expected '1' got '2'"
+    """
+    return ( expect == got or
+            "Compare failed, expected '{}' got '{}'".format(expect, got) )
 
 if __name__ == "__main__":
     import doctest
-    doctest.testmod()
+doctest.testmod()
