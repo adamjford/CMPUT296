@@ -62,8 +62,7 @@ def least_cost_path(G, start, dest, cost):
     if dest_found:
         path.append(dest)
         while path[0] != start:
-            foo = parent[path[0]]
-            path.insert(0, foo)
+            path.insert(0, parent[path[0]])
 
     return path
 
