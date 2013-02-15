@@ -1,5 +1,4 @@
 from digraph import Digraph
-from collections import OrderedDict
 
 def least_cost_path(G, start, dest, cost):
     """
