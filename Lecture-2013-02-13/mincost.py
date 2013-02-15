@@ -1,10 +1,7 @@
-def pop_smallest_cost(G):
-    pass
-
 def mincost(G, start, cost):
     """
     todo[start] = 0
-    while todo
+    while todo:
       (cur, c) = todo.pop_smallest()
       mincost[cur] = c
       for n in neighbors:
@@ -12,7 +9,5 @@ def mincost(G, start, cost):
         if (n not in todo) or todo[n] > c + cost((c,n)):
           todo[n] = c + cost((c,n))
     """
-    todo = {}
-    todo[start] = 0
-    while todo:
+    pass
 
