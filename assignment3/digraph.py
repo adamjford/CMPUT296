@@ -1,5 +1,5 @@
 """
-Graph module for undirected graphs.
+Graph module for directed graphs.
 """
 
 import random
@@ -14,12 +14,12 @@ class Digraph:
     Directed graph.  The vertices must be immutable.
 
     To create an empty graph:
-        >>> G = Digraph()
+    >>> G = Digraph()
     >>> (G.num_vertices(), G.num_edges())
     (0, 0)
 
     To create a circular graph with 3 vertices:
-        >>> G = Digraph([(1, 2), (2, 3), (3, 1)])
+    >>> G = Digraph([(1, 2), (2, 3), (3, 1)])
     >>> (G.num_vertices(), G.num_edges())
     (3, 3)
     """
