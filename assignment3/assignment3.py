@@ -23,7 +23,7 @@ def euclidean_distance(coords1, coords2):
     """
     Returns the Euclidean distance between two coordinates
 
-    >>> tcompare(0, euclidean_distance((0,0), (0,0))
+    >>> tcompare(0, euclidean_distance((0,0), (0,0)))
     True
     >>> tcompare(math.sqrt(2), euclidean_distance((0,0), (1,1)))
     True
@@ -35,12 +35,12 @@ def euclidean_distance(coords1, coords2):
     True
     >>> tcompare(25 * math.sqrt(2), euclidean_distance((-50,-50), (-75, -75)))
     True
-    >>> tcompare(25 * math.sqrt(2), euclidean_distance((-75, -75), (-50,-50)))
+    >>> tcompare(25 * math.sqrt(2), euclidean_distance((-75, -75), (-50, -50)))
     True
-    >>> tcompare(73 * math.sqrt(2), euclidean_distance((15, -3), (-58,70)))
+    >>> tcompare(50 * math.sqrt(13), euclidean_distance((-50, 75), (50, -75)))
     True
     """
-    pass
+    return math.sqrt(math.pow(coords2[0] - coords1[0], 2) + math.pow(coords2[1] - coords1[1], 2))
 
 if __name__ == "__main__":
     import doctest
