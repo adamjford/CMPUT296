@@ -1,6 +1,7 @@
 from digraph import Digraph
 from least_cost_path import least_cost_path
-import Math
+from testcompare import tcompare
+import math
 
 # contents: { vertex_id: ( lat, long ) }
 vertices = {}
@@ -11,14 +12,41 @@ def cost_distance(e):
     """
     cost_distance returns the straight-line distance between the two
     vertices at the endpoints of the edge e.
-    >>> cost_distance(
     """
     v1 = vertices[e[0]]
     v2 = vertices[e[1]]
 
     pass
-    #return Math.sqrt(Math.pow(v2[0] - v1[0], 2) + Math.pow(v2[1] - v1[1], 2)
+    #return math.sqrt(math.pow(v2[0] - v1[0], 2) + Math.pow(v2[1] - v1[1], 2)
 
+def euclidean_distance(coords1, coords2):
+    """
+    Returns the Euclidean distance between two coordinates
+
+    >>> tcompare(0, euclidean_distance((0,0), (0,0))
+    True
+    >>> tcompare(math.sqrt(2), euclidean_distance((0,0), (1,1)))
+    True
+    >>> tcompare(math.sqrt(2), euclidean_distance((1,1), (0,0)))
+    True
+    >>> tcompare(2 * math.sqrt(2), euclidean_distance((-1,-1), (1,1)))
+    True
+    >>> tcompare(2 * math.sqrt(2), euclidean_distance((1,1), (-1,-1)))
+    True
+    >>> tcompare(25 * math.sqrt(2), euclidean_distance((-50,-50), (-75, -75)))
+    True
+    >>> tcompare(25 * math.sqrt(2), euclidean_distance((-75, -75), (-50,-50)))
+    True
+    >>> tcompare(73 * math.sqrt(2), euclidean_distance((15, -3), (-58,70)))
+    True
+    """
+    pass
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+
+"""
 if __name__ == "__main__":
     graph = Digraph()
 
@@ -37,4 +65,4 @@ if __name__ == "__main__":
 
     foo = raw_input()
     (lat1, long1, lat2, long2) = foo.rstrip().split(' ')
-    
+"""
