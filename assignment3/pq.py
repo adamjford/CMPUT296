@@ -55,8 +55,17 @@ Binary heap:
 """
 
 class PQueue:
+    def _parent(self, i):
+        return (i-1)//2
+
+    def _lchild(self, i):
+        return (2 * i) + 1
+
+    def _rchild(self, i):
+        return (2 * i) + 2
+
     def __init__(self):
-        self._q = {}
+        self._heap = []
 
     def __len__(self):
         return len(self._q)
