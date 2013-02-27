@@ -51,7 +51,7 @@ def least_cost_path(G, start, dest, cost):
                     todo[n] = c + cost((c,n))
                     parent[n] = cur
         except KeyError:
-            break
+            pass
 
     if not dest_found: return None
 
