@@ -1,3 +1,14 @@
+"""
+CMPUT 297/115 - Assignment 3 Part 1 - Due 2013-03-01
+
+Version 1.0 2013-02-28
+
+By: Adam Ford
+
+This assignment is a solo effort, and
+any extra resources are cited in the code below.
+"""
+
 from digraph import Digraph
 from least_cost_path import least_cost_path
 from testcompare import tcompare
@@ -89,7 +100,16 @@ class Server:
 
 if __name__ == "__main__":
     s = Server()
-    s.import_file('edmonton-roads-2.0.1.txt')
+    filename = 'edmonton-roads-2.0.1.txt'
+
+    print("Welcome to Adam Form's Assignment 3 Part 1 submission!")
+    print('Please enter a file name or nothing to use default ({}):'.format(repr(filename)))
+    new_filename = raw_input().strip()
+
+    if new_filename:
+        filename = new_filename
+
+    s.import_file(filename)
 
     while True:
         args = raw_input()
