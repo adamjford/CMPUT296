@@ -127,4 +127,4 @@ if __name__ == "__main__":
         print(len(path))
 
         for c in path:
-            print('{} {}'.format(c[0], c[1]))
+            print('{} {}'.format(int(c[0]), int(c[1])))
