@@ -21,12 +21,19 @@ class Server:
         >>> s.vertex_locations[283173961] = (53.4590515,-113.4263165)
         >>> tcompare(94765, int(s.cost_distance((275965046, 283173961)) * 1000000))
         True
-
         """
         v1 = self.vertex_locations[e[0]]
         v2 = self.vertex_locations[e[1]]
 
         return euclidean_distance(v1, v2)
+
+    def closet_vertex(self, lat, long):
+        """
+        Returns the id of the closest vertex to the specified lat and long
+        >>> s = Server()
+        >>> s.vertex_locations[275965046] = (53.473513,-113.5199716)
+        >>> s.vertex_locations[283173961] = (53.4590515,-113.4263165)
+        """
 
 def euclidean_distance(coords1, coords2):
     """
@@ -59,7 +66,7 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     graph = Digraph()
 
-    for line in open('edmonton-roads-digraph.txt', 'r'):
+    for line in open('edmonton-roads-2.0.1.txt', 'r'):
         split_line = line.rstrip().split(',')
         line_type = split_line[0]
 
