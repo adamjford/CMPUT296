@@ -1,11 +1,13 @@
 from digraph import Digraph
 from least_cost_path import least_cost_path
 from testcompare import tcompare
+from euclidean_distance import euclidean_distance
 import math
 
 class Server:
     def __init__(self):
         # contents: { vertex_id: ( lat, long ) }
+        # lat and long values are stored in 100,000th of degrees
         self.vertex_locations = {}
         # contents: { ( v1, v2 ): name }
         self.edges = {}
@@ -67,6 +69,9 @@ class Server:
         return closest[0]
 
     def find_shortest_path(self, lat1, long1, lat2, long2):
+        """
+        Returns a least cost path of coordinates from (lat1, long1) to (lat1, long1)
+        """
         v1 = s.closest_vertex(lat1, long1)
         v2 = s.closest_vertex(lat2, long2)
 
@@ -81,35 +86,6 @@ class Server:
                 path.append(self.vertex_locations[v])
 
         return path
-
-def euclidean_distance(coords1, coords2):
-    """
-    Returns the Euclidean (straight-line) distance between two coordinates
-
-    >>> tcompare(0, euclidean_distance((0,0), (0,0)))
-    True
-    >>> tcompare(math.sqrt(2), euclidean_distance((0,0), (1,1)))
-    True
-    >>> tcompare(math.sqrt(2), euclidean_distance((1,1), (0,0)))
-    True
-    >>> tcompare(2 * math.sqrt(2), euclidean_distance((-1,-1), (1,1)))
-    True
-    >>> tcompare(2 * math.sqrt(2), euclidean_distance((1,1), (-1,-1)))
-    True
-    >>> tcompare(25 * math.sqrt(2), euclidean_distance((-50,-50), (-75, -75)))
-    True
-    >>> tcompare(25 * math.sqrt(2), euclidean_distance((-75, -75), (-50, -50)))
-    True
-    >>> tcompare(50 * math.sqrt(13), euclidean_distance((-50, 75), (50, -75)))
-    True
-    """
-    return math.sqrt(math.pow(coords2[0] - coords1[0], 2) + math.pow(coords2[1] - coords1[1], 2))
-
-"""
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
-"""
 
 if __name__ == "__main__":
     s = Server()
