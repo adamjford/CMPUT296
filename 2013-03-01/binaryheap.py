@@ -49,7 +49,18 @@ False
 >>> q.is_empty()
 True
 
+>>> heapsort([9, 3, 5, 0, 7, 6])
+[0, 3, 5, 6, 7, 9]
+>>> heapsort([1, 1, 1, 1])
+[1, 1, 1, 1]
+>>> heapsort([3, 3, 2, 2, 1, 1, 10])
+[1, 1, 2, 2, 3, 3, 10]
 """
+
+def heapsort(l):
+    q = PQueue()
+    for (i,x) in enumerate(l): q.update(i, x)
+    return [ q.pop_smallest()[1] for x in l ]
 
 def _parent(i):
     return (i-1)//2
