@@ -89,7 +89,9 @@ class Server:
         #print('Closest vertices: {} and {}'.format(v1, v2))
 
         vertex_path = least_cost_path(self.graph, v1, v2, self.cost_distance)
-        print('vertex_path: {}'.format(vertex_path))
+
+        #print('vertex_path: {}'.format(vertex_path))
+
         path = []
 
         if vertex_path is not None:
@@ -100,19 +102,14 @@ class Server:
 
 if __name__ == "__main__":
     s = Server()
-    filename = 'edmonton-roads-2.0.1.txt'
+    filename = 'edmonton_roads.txt'
 
     print("Welcome to Adam Form's Assignment 3 Part 1 submission!")
-    print('Please enter a file name or nothing to use default ({}):'.format(repr(filename)))
-    new_filename = raw_input().strip()
-
-    if new_filename:
-        filename = new_filename
 
     s.import_file(filename)
 
     while True:
-        args = raw_input()
+        args = input()
 
         (lat1, long1, lat2, long2) = args.rstrip().split(' ')
 
