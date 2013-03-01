@@ -36,7 +36,9 @@ class Server:
         >>> s.closest_vertex(53.459, -113.426)
         283173961
         """
-        pass
+        coords = (lat, long)
+        closest = min(self.vertex_locations.items(), key=lambda x: euclidean_distance(coords, x[1]))
+        return closest[0]
 
 def euclidean_distance(coords1, coords2):
     """
