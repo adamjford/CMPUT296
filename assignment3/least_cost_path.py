@@ -37,21 +37,25 @@ def least_cost_path(G, start, dest, cost):
     parent = {}
     dest_found = False
 
+    #print('least_cost_path:\n')
+
     while todo and not dest_found:
         (cur, c) = min(todo.items(), key=lambda x: x[1])
+        print('cur = {}; c = {}\n'.format(cur, c))
         del todo[cur]
         visited.add(cur)
         if cur == dest:
             dest_found = True
 
-        try:
-            for n in G.adj_to(cur):
-                if n in visited: continue
-                if (n not in todo) or todo[n] > c + cost((c,n)):
-                    todo[n] = c + cost((c,n))
-                    parent[n] = cur
-        except KeyError:
-            pass
+        #try:
+        print('Neighbours: {}'.format(G.adj_to(cur)))
+        for n in G.adj_to(cur):
+            if n in visited: continue
+            if (n not in todo) or todo[n] > c + cost((cur,n)):
+                todo[n] = c + cost((cur,n))
+                parent[n] = cur
+        #except KeyError:
+            #pass
 
     if not dest_found: return None
 
