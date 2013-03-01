@@ -47,11 +47,6 @@ True
 False
 >>> q.pop_smallest() is None
 True
-
-Binary heap:
-    lchild(i) = 2i+1
-    rchild(i) = 2i+2
-    parent(i) = (i-1)//2
 """
 
 class PQueue:
