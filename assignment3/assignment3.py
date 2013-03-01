@@ -11,32 +11,22 @@ class Server:
         self.edges = {}
         self.graph = Digraph()
 
-    def add_vertex(vertex_id, lat, long):
+    def cost_distance(self, e):
         """
-        Adds a vertex and its location to the graph.
+        cost_distance returns the straight-line distance between the two
+        vertices at the endpoints of the edge e.
 
         >>> s = Server()
+        >>> s.vertex_locations[275965046] = (53.473513,-113.5199716)
+        >>> s.vertex_locations[283173961] = (53.4590515,-113.4263165)
+        >>> tcompare(94765, int(s.cost_distance((275965046, 283173961)) * 1000000))
+        True
+
         """
+        v1 = self.vertex_locations[e[0]]
+        v2 = self.vertex_locations[e[1]]
 
-        pass
-
-def cost_distance(e):
-    """
-    cost_distance returns the straight-line distance between the two
-    vertices at the endpoints of the edge e.
-
-    >>> vertices = {}
-    >>> vertices[275965046] = (53.473513,-113.5199716)
-    >>> vertices[283173961] = (53.4590515,-113.4263165)
-    >>> tcompare(0.094765, cost_distance((275965046, 283173961)))
-    True
-
-    """
-    v1 = vertices[e[0]]
-    v2 = vertices[e[1]]
-
-    pass
-    #return math.sqrt(math.pow(v2[0] - v1[0], 2) + Math.pow(v2[1] - v1[1], 2)
+        return euclidean_distance(v1, v2)
 
 def euclidean_distance(coords1, coords2):
     """
