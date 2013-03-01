@@ -27,13 +27,16 @@ class Server:
 
         return euclidean_distance(v1, v2)
 
-    def closet_vertex(self, lat, long):
+    def closest_vertex(self, lat, long):
         """
         Returns the id of the closest vertex to the specified lat and long
         >>> s = Server()
         >>> s.vertex_locations[275965046] = (53.473513,-113.5199716)
         >>> s.vertex_locations[283173961] = (53.4590515,-113.4263165)
+        >>> s.closest_vertex(53.459, -113.426)
+        283173961
         """
+        pass
 
 def euclidean_distance(coords1, coords2):
     """
