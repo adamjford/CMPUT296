@@ -127,6 +127,7 @@ void draw_path(uint16_t length, coord_t path[]) {
         coord_t cur = path[i];
 
         if(has_prev) {
+            #ifdef DEBUG_PATH
             Serial.print("prev: (");
             Serial.print(prev.lat);
             Serial.print(",");
@@ -146,17 +147,17 @@ void draw_path(uint16_t length, coord_t path[]) {
                 uint16_t cur_x = longitude_to_x(current_map_num, cur.lon) - screen_map_x;
 
                 #ifdef DEBUG_PATH
-                Serial.print("prev: (");
-                Serial.print(prev_x);
-                Serial.print(",");
-                Serial.print(prev_y);
-                Serial.println(")");
+                    Serial.print("prev: (");
+                    Serial.print(prev_x);
+                    Serial.print(",");
+                    Serial.print(prev_y);
+                    Serial.println(")");
 
-                Serial.print("cur: (");
-                Serial.print(cur_x);
-                Serial.print(",");
-                Serial.print(cur_y);
-                Serial.println(")");
+                    Serial.print("cur: (");
+                    Serial.print(cur_x);
+                    Serial.print(",");
+                    Serial.print(cur_y);
+                    Serial.println(")");
                 #endif
 
                 tft.drawLine(prev_x, prev_y, cur_x, cur_y, BLUE);

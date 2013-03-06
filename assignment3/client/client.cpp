@@ -8,7 +8,7 @@
 #include "serial_handling.h"
 
 // #define DEBUG_SCROLLING
-#define DEBUG_PATH
+// #define DEBUG_PATH
 // #define DEBUG_MEMORY
 
 // Pins and interrupt lines for the zoom in and out buttons.
