@@ -1,7 +1,7 @@
 """
-CMPUT 297/115 - Assignment 3 Part 1 - Due 2013-03-01
+CMPUT 297/115 - Assignment 3 Part 2 - Due 2013-03-08
 
-Version 1.0 2013-02-28
+Version 1.0 2013-03-07
 
 By: Adam Ford
 
@@ -14,6 +14,107 @@ from least_cost_path import least_cost_path
 from testcompare import tcompare
 from euclidean_distance import euclidean_distance
 import math
+import sys
+import serial
+import argparse
+
+global debug
+debug = False
+
+# Source: dumb_server.py provided with assignment details
+def main():
+    args = parse_args()
+
+    s = Server()
+
+    print("Welcome to Adam Form's Assignment 3 Part 2 submission!")
+
+    # Initialize some stuff...
+    if args.serialport:
+        print("Opening serial port: %s" % args.serialport)
+        serial_out = serial_in =  serial.Serial(args.serialport, 9600)
+    else:
+        print("No serial port.  Supply one with the -s port option")
+        exit()
+
+    if args.verbose:
+        debug = True
+    else:
+        debug = False
+
+    s.import_file('edmonton_roads.txt')
+
+    while True:
+        args = receive(serial_in).rstrip().split(' ')
+        if len(args) != 4: continue
+
+        (lat1, long1, lat2, long2) = args
+
+        debug and print('Finding path between {} and {}...'.format((lat1, long1), (lat2, long2)))
+
+        path = s.find_shortest_path(int(lat1), int(long1), int(lat2), int(long2))
+
+        send(serial_out, str(len(path)))
+
+        for c in path:
+            send(serial_out, '{} {}'.format(int(c[0]), int(c[1])))
+
+# Source: dumb_server.py provided with assignment details
+def send(serial_port, message):
+    """
+    Sends a message back to the client device.
+    """
+    print('message: ' + message)
+    full_message = ''.join((message, "\n"))
+
+    debug and print("server:" + full_message + ":")
+
+    reencoded = bytes(full_message, encoding='ascii')
+    serial_port.write(reencoded)
+
+
+# Source: dumb_server.py provided with assignment details
+def receive(serial_port, timeout=None):
+    """
+    Listen for a message. Attempt to timeout after a certain number of
+    milliseconds.
+    """
+    raw_message = serial_port.readline()
+
+    debug and print("client:", raw_message, ":")
+
+    message = raw_message.decode('ascii')
+
+    return message.rstrip("\n\r")
+
+
+# Source: dumb_server.py provided with assignment details
+def parse_args():
+    """
+    Parses arguments for this program.
+    Returns an object with the following members:
+        args.
+             serialport -- str
+             verbose    -- bool
+             graphname  -- str
+    """
+
+    parser = argparse.ArgumentParser(
+        description='Assignment 1: Map directions.',
+        epilog = 'If SERIALPORT is not specified, stdin/stdout are used.')
+    parser.add_argument('-s', '--serial',
+                        help='path to serial port',
+                        dest='serialport',
+                        default=None)
+    parser.add_argument('-v', dest='verbose',
+                        help='verbose',
+                        action='store_true')
+    parser.add_argument('-g', '--graph',
+                        help='path to graph (DEFAULT = " edmonton-roads-2.0.1.txt")',
+                        dest='graphname',
+                        default=' edmonton-roads-2.0.1.txt')
+
+    return parser.parse_args()
 
 class Server:
     def __init__(self):
@@ -83,8 +184,8 @@ class Server:
         """
         Returns a least cost path of coordinates from (lat1, long1) to (lat1, long1)
         """
-        v1 = s.closest_vertex(lat1, long1)
-        v2 = s.closest_vertex(lat2, long2)
+        v1 = self.closest_vertex(lat1, long1)
+        v2 = self.closest_vertex(lat2, long2)
 
         #print('Closest vertices: {} and {}'.format(v1, v2))
 
@@ -101,23 +202,4 @@ class Server:
         return path
 
 if __name__ == "__main__":
-    s = Server()
-    filename = 'edmonton_roads.txt'
-
-    print("Welcome to Adam Form's Assignment 3 Part 1 submission!")
-
-    s.import_file(filename)
-
-    while True:
-        args = input()
-
-        (lat1, long1, lat2, long2) = args.rstrip().split(' ')
-
-        #print('Finding path between {} and {}...'.format((lat1, long1), (lat2, long2)))
-
-        path = s.find_shortest_path(int(lat1), int(long1), int(lat2), int(long2))
-
-        print(len(path))
-
-        for c in path:
-            print('{} {}'.format(int(c[0]), int(c[1])))
+    main()

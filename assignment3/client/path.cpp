@@ -6,7 +6,7 @@
 #include "map.h"
 #include "serial_handling.h"
 
-#define DEBUG_PATH
+// #define DEBUG_PATH
 
 /* path routine error code
    0 no error
@@ -128,17 +128,18 @@ void draw_path(uint16_t length, coord_t path[]) {
 
         if(has_prev) {
             #ifdef DEBUG_PATH
-            Serial.print("prev: (");
-            Serial.print(prev.lat);
-            Serial.print(",");
-            Serial.print(prev.lon);
-            Serial.println(")");
+                Serial.print("prev: (");
+                Serial.print(prev.lat);
+                Serial.print(",");
+                Serial.print(prev.lon);
+                Serial.println(")");
 
-            Serial.print("cur: (");
-            Serial.print(cur.lat);
-            Serial.print(",");
-            Serial.print(cur.lon);
-            Serial.println(")");
+                Serial.print("cur: (");
+                Serial.print(cur.lat);
+                Serial.print(",");
+                Serial.print(cur.lon);
+                Serial.println(")");
+            #endif
 
             if(is_coord_visible(prev) && is_coord_visible(cur)) {
                 uint16_t prev_y = latitude_to_y(current_map_num, prev.lat) - screen_map_y;
