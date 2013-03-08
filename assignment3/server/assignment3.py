@@ -27,7 +27,7 @@ def main():
 
     s = Server()
 
-    print("Welcome to Adam Form's Assignment 3 Part 2 submission!")
+    print("Welcome to Adam Ford's Assignment 3 Part 2 submission!")
 
     # Initialize some stuff...
     if args.serialport:
