@@ -5,7 +5,6 @@
 
 #include "map.h"
 #include "serial_handling.h"
-#include "cohen_sutherland.h"
 
 // #define DEBUG_PATH
 
@@ -142,26 +141,28 @@ void draw_path(uint16_t length, coord_t path[]) {
                 Serial.println(")");
             #endif
 
-            uint16_t prev_y = latitude_to_y(current_map_num, prev.lat);
-            uint16_t prev_x = longitude_to_x(current_map_num, prev.lon);
-            uint16_t cur_y = latitude_to_y(current_map_num, cur.lat);
-            uint16_t cur_x = longitude_to_x(current_map_num, cur.lon);
+            if(is_coord_visible(prev) && is_coord_visible(cur)) {
+                uint16_t prev_y = latitude_to_y(current_map_num, prev.lat) - screen_map_y;
+                uint16_t prev_x = longitude_to_x(current_map_num, prev.lon) - screen_map_x;
+                uint16_t cur_y = latitude_to_y(current_map_num, cur.lat) - screen_map_y;
+                uint16_t cur_x = longitude_to_x(current_map_num, cur.lon) - screen_map_x;
 
-            #ifdef DEBUG_PATH
-                Serial.print("prev: (");
-                Serial.print(prev_x);
-                Serial.print(",");
-                Serial.print(prev_y);
-                Serial.println(")");
+                #ifdef DEBUG_PATH
+                    Serial.print("prev: (");
+                    Serial.print(prev_x);
+                    Serial.print(",");
+                    Serial.print(prev_y);
+                    Serial.println(")");
 
-                Serial.print("cur: (");
-                Serial.print(cur_x);
-                Serial.print(",");
-                Serial.print(cur_y);
-                Serial.println(")");
-            #endif
+                    Serial.print("cur: (");
+                    Serial.print(cur_x);
+                    Serial.print(",");
+                    Serial.print(cur_y);
+                    Serial.println(")");
+                #endif
 
-            CohenSutherlandLineClipAndDraw(prev_x, prev_y, cur_x, cur_y);
+                tft.drawLine(prev_x, prev_y, cur_x, cur_y, BLUE);
+            }
         }
         prev = cur;
         has_prev = 1;
