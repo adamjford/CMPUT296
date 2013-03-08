@@ -11,7 +11,7 @@
 /* path routine error code
    0 no error
    1 
-*/
+   */
 int16_t path_errno;
 
 extern Adafruit_ST7735 tft;
@@ -44,10 +44,10 @@ uint8_t read_path(uint16_t *length_p, coord_t *path_p[]) {
 
     uint16_t max_path_size = (AVAIL_MEM - 256) / sizeof(coord_t);
 
-    #ifdef DEBUG_PATH
-        Serial.print("Max path length ");
-        Serial.println(max_path_size);
-    #endif
+#ifdef DEBUG_PATH
+    Serial.print("Max path length ");
+    Serial.println(max_path_size);
+#endif
 
     bytes_read = serial_readline(line, line_size);
 
@@ -57,17 +57,17 @@ uint8_t read_path(uint16_t *length_p, coord_t *path_p[]) {
         string_read_field(line, field_index, field, field_size, " ");
     field_value = string_get_int(field);
 
-    #ifdef DEBUG_PATH
-        Serial.print("Path length ");
-        Serial.print(field_value);
-        Serial.println();
-    #endif
+#ifdef DEBUG_PATH
+    Serial.print("Path length ");
+    Serial.print(field_value);
+    Serial.println();
+#endif
 
     // do a consistency check
     if ( field_value < 0  || max_path_size < field_value ) {
         path_errno = 1;
         return 0;
-        }
+    }
     uint8_t tmp_length = field_value;
     *length_p = tmp_length;
 
@@ -76,7 +76,7 @@ uint8_t read_path(uint16_t *length_p, coord_t *path_p[]) {
     if ( !tmp_path ) { 
         path_errno = 2;
         return 0; 
-        }
+    }
 
     *path_p = tmp_path;
 
@@ -96,10 +96,10 @@ uint8_t read_path(uint16_t *length_p, coord_t *path_p[]) {
 
         tmp_length--;
         tmp_path++;
-        }
+    }
 
     return 1;
-    }
+}
 
 uint8_t is_coord_visible(coord_t point) {
     // figure out the x and y positions on the current map of the 
@@ -114,55 +114,56 @@ uint8_t is_coord_visible(coord_t point) {
         point_map_y < screen_map_y + display_window_height; 
 
     return r;
-    }
+}
 
+// Draws a path, by drawing a line between each set of coords in order
 void draw_path(uint16_t length, coord_t path[]) {
     boolean has_prev = 0;
     coord_t prev;
 
+#ifdef DEBUG_PATH
     Serial.print("length: ");
     Serial.println(length);
+#endif
 
     for(size_t i = 0; i < length; i++) {
         coord_t cur = path[i];
 
         if(has_prev) {
-            #ifdef DEBUG_PATH
-                Serial.print("prev: (");
-                Serial.print(prev.lat);
-                Serial.print(",");
-                Serial.print(prev.lon);
-                Serial.println(")");
+#ifdef DEBUG_PATH
+            Serial.print("prev: (");
+            Serial.print(prev.lat);
+            Serial.print(",");
+            Serial.print(prev.lon);
+            Serial.println(")");
 
-                Serial.print("cur: (");
-                Serial.print(cur.lat);
-                Serial.print(",");
-                Serial.print(cur.lon);
-                Serial.println(")");
-            #endif
+            Serial.print("cur: (");
+            Serial.print(cur.lat);
+            Serial.print(",");
+            Serial.print(cur.lon);
+            Serial.println(")");
+#endif
 
-            if(is_coord_visible(prev) && is_coord_visible(cur)) {
-                uint16_t prev_y = latitude_to_y(current_map_num, prev.lat) - screen_map_y;
-                uint16_t prev_x = longitude_to_x(current_map_num, prev.lon) - screen_map_x;
-                uint16_t cur_y = latitude_to_y(current_map_num, cur.lat) - screen_map_y;
-                uint16_t cur_x = longitude_to_x(current_map_num, cur.lon) - screen_map_x;
+            uint16_t prev_y = latitude_to_y(current_map_num, prev.lat) - screen_map_y;
+            uint16_t prev_x = longitude_to_x(current_map_num, prev.lon) - screen_map_x;
+            uint16_t cur_y = latitude_to_y(current_map_num, cur.lat) - screen_map_y;
+            uint16_t cur_x = longitude_to_x(current_map_num, cur.lon) - screen_map_x;
 
-                #ifdef DEBUG_PATH
-                    Serial.print("prev: (");
-                    Serial.print(prev_x);
-                    Serial.print(",");
-                    Serial.print(prev_y);
-                    Serial.println(")");
+#ifdef DEBUG_PATH
+            Serial.print("prev: (");
+            Serial.print(prev_x);
+            Serial.print(",");
+            Serial.print(prev_y);
+            Serial.println(")");
 
-                    Serial.print("cur: (");
-                    Serial.print(cur_x);
-                    Serial.print(",");
-                    Serial.print(cur_y);
-                    Serial.println(")");
-                #endif
+            Serial.print("cur: (");
+            Serial.print(cur_x);
+            Serial.print(",");
+            Serial.print(cur_y);
+            Serial.println(")");
+#endif
 
-                tft.drawLine(prev_x, prev_y, cur_x, cur_y, BLUE);
-            }
+            tft.drawLine(prev_x, prev_y, cur_x, cur_y, BLUE);
         }
         prev = cur;
         has_prev = 1;
