@@ -23,7 +23,42 @@ class Zombie(MoveEnhanced):
     def compute_next_move(self):
         if agentsim.debug.get(128):
             pass
- 
-        delta_x = 10 * (0.5 - random.random())
-        delta_y = 10 * (0.5 - random.random())
+
+        normals = normal.Normal.get_all_instances()
+
+        if not normals:
+            pass
+
+        # find nearest normal
+        nearest = min(
+            # make pairs of (person, distance from self to person)
+            [ (n, self.distances_to(n)[0] ) for n in normals if n.is_present() ]
+            ,
+            # and sort by distance
+            key=(lambda x: x[1])
+            )
+
+        (target, near_d) = nearest
+
+        (d, delta_x, delta_y, d_e_e) = self.distances_to(target)
+
+        if self._move_limit is not None:
+            delta_d = (delta_x * delta_x + delta_y * delta_y) ** 0.5
+
+            if delta_d > self._move_limit:
+                delta_x = delta_x * self._move_limit / delta_d
+                delta_y = delta_y * self._move_limit / delta_d
+
+        too_close = self.is_near_after_move(target, delta_x, delta_y)
+
+        while too_close:
+            delta_x = delta_x/2
+            delta_y = delta_y/2
+
+            too_close = self.is_near_after_move(target, delta_x, delta_y)
+
+        if agentsim.debug.get(128):
+            print("nearest normal to {} is {}, dx {} dy {}".format(
+                self.get_name(), target.get_name(), delta_x, delta_y))
+
         return (delta_x, delta_y)
