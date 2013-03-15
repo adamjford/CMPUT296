@@ -70,19 +70,12 @@ class Defender(MoveEnhanced):
                 y = random.randint(y_min, y_max)
                 self.teleport(target, x, y)
             else:
-                delta_d = (delta_x * delta_x + delta_y * delta_y) ** 0.5
-
-                if delta_d > self.get_move_limit():
-                    delta_x = delta_x * self._move_limit / delta_d
-                    delta_y = delta_y * self._move_limit / delta_d
-
-                too_close = self.is_near_after_move(target, delta_x, delta_y)
-
-                while too_close and not (delta_x == 0 and delta_y == 0):
-                    delta_x = delta_x/2
-                    delta_y = delta_y/2
-
-                    too_close = self.is_near_after_move(target, delta_x, delta_y)
+                # TODO: Figure out a way to get chaser to get right up to edge of target
+                if d_edge_edge < self.get_move_limit():
+                    t = self.get_teleport_threshold()
+                    ratio = (d_edge_edge - t)/ d
+                    delta_x = delta_x * ratio
+                    delta_y = delta_y * ratio
 
             # and change happiness proportional to distance
             (w,h) = agentsim.gui.get_canvas_size()
