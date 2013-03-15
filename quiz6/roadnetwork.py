@@ -202,10 +202,10 @@ def _direction(start_coords, end_coords):
 
     Both parameters should be tuples of form (lat, lon).
 
-    Only covers the four cardinal directions, preferring North or 
+    Only covers the four cardinal directions, preferring North or
     South over East or West.
 
-    i.e.: An edge going exactly NW will return as North.
+    e.g.: An edge going exactly NW will return as North.
 
     >>> _direction((0.0, 0.0), (1.0, 0.0))
     'North'
@@ -215,8 +215,26 @@ def _direction(start_coords, end_coords):
     'East'
     >>> _direction((0.0, 0.0), (2.0, 2.0))
     'North'
+    >>> _direction((0.0, 0.0), (0.0, 0.0)) is None
+    True
     """
-    pass
+
+    lat_diff = end_coords[0] - start_coords[0]
+    lon_diff = end_coords[1] - start_coords[1]
+
+    if lat_diff == 0 and lon_diff == 0:
+        # Can't go anywhere if the two coordinates
+        # are the same!
+        return None
+
+    # Don't need to worry about either diff being 0 here because:
+    # if both diffs were 0, it would have returned up above
+    # if one is 0, the other is guaranteed to have a larger magnitude
+    v_direction = 'North' if lat_diff > 0 else 'South'
+    h_direction = 'East' if lon_diff > 0 else 'West'
+
+    # Prefer North/South if the magnitude of diffs are the same
+    return v_direction if abs(lat_diff) >= abs(lon_diff) else h_direction
 
     ######################################
 
