@@ -47,28 +47,42 @@ class Defender(MoveEnhanced):
         if all_z:
             nearest = min(
                 # make pairs of (person, distance from self to person)
-                [ (z, self.distances_to(z)[0] ) for z in all_z ]
+                [ (z, self.distances_to(z)) for z in all_z ]
                 ,
                 # and sort by distance
-                key=(lambda x: x[1])
+                key=(lambda x: x[1][0])
                 )
 
-            (near_z, near_d) = nearest
+            (target, near_d) = nearest
 
             # move towards nearest zombie
-            (d, delta_x, delta_y, d_edge_edge) = self.distances_to(near_z)
+            (d, delta_x, delta_y, d_edge_edge) = near_d
 
             if agentsim.debug.get(64):
                 print("nearest zombie to {} is {}, dx {} dy {}".format(
-                    self.get_name(), near_z.get_name(), delta_x, delta_y, d_edge_edge))
+                    self.get_name(), target.get_name(), delta_x, delta_y, d_edge_edge))
 
             # but if close enough to teleport, send the zombie to a random
             # point instead
-            if d_edge_edge <= self.get_teleport_threshold() :
+            if d_edge_edge <= self.get_teleport_threshold():
                 (x_min, y_min, x_max, y_max) = agentsim.gui.get_canvas_coords()
                 x = random.randint(x_min, x_max)
                 y = random.randint(y_min, y_max)
-                self.teleport(near_z, x, y)
+                self.teleport(target, x, y)
+            else:
+                delta_d = (delta_x * delta_x + delta_y * delta_y) ** 0.5
+
+                if delta_d > self.get_move_limit():
+                    delta_x = delta_x * self._move_limit / delta_d
+                    delta_y = delta_y * self._move_limit / delta_d
+
+                too_close = self.is_near_after_move(target, delta_x, delta_y)
+
+                while too_close and not (delta_x == 0 and delta_y == 0):
+                    delta_x = delta_x/2
+                    delta_y = delta_y/2
+
+                    too_close = self.is_near_after_move(target, delta_x, delta_y)
 
             # and change happiness proportional to distance
             (w,h) = agentsim.gui.get_canvas_size()

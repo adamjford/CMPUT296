@@ -25,22 +25,22 @@ class Zombie(MoveEnhanced):
 
         normals = normal.Normal.get_all_present_instances()
 
-        if len(normals) == 0:
+        if not normals:
             # No normals left so nothing left to do
             return (0, 0)
 
         # find nearest normal
         nearest = min(
             # make pairs of (person, distance from self to person)
-            [ (n, self.distances_to(n)[0] ) for n in normals ]
+            [ (n, self.distances_to(n)) for n in normals ]
             ,
             # and sort by distance
-            key=(lambda x: x[1])
+            key=(lambda x: x[1][0])
             )
 
         (target, near_d) = nearest
 
-        (d, delta_x, delta_y, d_e_e) = self.distances_to(target)
+        (d, delta_x, delta_y, d_e_e) = near_d
 
         delta_d = (delta_x * delta_x + delta_y * delta_y) ** 0.5
 
