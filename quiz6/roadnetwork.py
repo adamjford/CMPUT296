@@ -34,10 +34,28 @@ class RoadNetwork:
 
     >>> roads.route_names((-1.0, 0.0), (1.0, 0.0))
     ['2 to 3', '3 to 4']
+    >>> roads.route_names((0.0, 0.0), (0.0, -2.0))
+    ['1 to 4', '4 to 5']
+    >>> roads.route_names((0.0, -2.0), (0.0, 0.0))
+    ['5 to 1']
+    >>> roads.route_names((-1.0, 0.0), (0.0, -2.0))
+    ['2 to 3', '3 to 4', '4 to 5']
 
     >>> print(roads.route_directions((-1.0, 0.0), (1.0, 0.0)))
     Go East on 2 to 3.
     Go West on 3 to 4.
+    >>> print(roads.route_directions((0.0, 0.0), (0.0, -2.0)))
+    Go North on 1 to 4.
+    Go South on 4 to 5.
+    >>> print(roads.route_directions((0.0, -2.0), (0.0, 0.0)))
+    Go East on 5 to 1.
+    >>> print(roads.route_directions((-1.0, 0.0), (0.0, -2.0)))
+    Go North on 2 to 3.
+    Go North on 3 to 4.
+    Go South on 4 to 5.
+
+    >>> roads = RoadNetwork('edmonton_roads.txt')
+
     """
     
     def __init__(self, mapfilename):
@@ -127,14 +145,19 @@ class RoadNetwork:
           'Jasper Ave NW' ]
 
         >>> n = RoadNetwork('simple_roads.txt')
-        >>> n.route_names(1, 5)
-        [ '1 to 4', '4 to 5' ]
-        >>> n.route_names(5, 1)
-        [ '5 to 1' ]
-        >>> n.route_names(2, 5)
-        [ '2 to 3', '3 to 4', '4 to 5' ]
         """
-        pass
+
+        path = digraph.least_cost_path(self.graph,
+                                        self._nearest_vertex(start),
+                                        self._nearest_vertex(end),
+                                        self.cost_distance)
+        names = []
+        for edge in pairwise(path):
+            name = self.E_name[edge]
+            if len(names) == 0 or name != names[-1]:
+                names.append(name)
+
+        return names
 
     def route_directions(self, start, end):
         """
@@ -151,17 +174,6 @@ class RoadNetwork:
 
         This specific implementation prefers North or South over East or
         West.
-
-        >>> n = RoadNetwork('simple_roads.txt')
-        >>> n.route_directions(1, 5)
-        Go North on 1 to 4.
-        Go South on 4 to 5.
-        >>> n.route_directions(5, 1)
-        Go East on 5 to 1.
-        >>> n.route_directions(2, 5)
-        Go North on 2 to 3.
-        Go North on 3 to 4.
-        Go South on 4 to 5.
         """
         pass
 
