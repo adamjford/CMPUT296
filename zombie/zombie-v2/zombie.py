@@ -23,15 +23,16 @@ class Zombie(MoveEnhanced):
         if agentsim.debug.get(128):
             pass
 
-        normals = normal.Normal.get_all_instances()
+        normals = normal.Normal.get_all_present_instances()
 
-        if not normals:
-            pass
+        if len(normals) == 0:
+            # No normals left so nothing left to do
+            return (0, 0)
 
         # find nearest normal
         nearest = min(
             # make pairs of (person, distance from self to person)
-            [ (n, self.distances_to(n)[0] ) for n in normals if n.is_present() ]
+            [ (n, self.distances_to(n)[0] ) for n in normals ]
             ,
             # and sort by distance
             key=(lambda x: x[1])
