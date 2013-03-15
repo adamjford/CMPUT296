@@ -145,8 +145,6 @@ class RoadNetwork:
         [ '111 Ave NW', 
           '99 St Ave',
           'Jasper Ave NW' ]
-
-        >>> n = RoadNetwork('simple_roads.txt')
         """
 
         path = digraph.least_cost_path(self.graph,
@@ -156,6 +154,9 @@ class RoadNetwork:
         names = []
         for edge in pairwise(path):
             name = self.E_name[edge]
+            # only add name to list if the list is empty
+            # or it's already the last name in the list
+            # which means the path's already on that road
             if len(names) == 0 or name != names[-1]:
                 names.append(name)
 
@@ -178,6 +179,44 @@ class RoadNetwork:
         West.
         """
         pass
+
+        path = digraph.least_cost_path(self.graph,
+                                        self._nearest_vertex(start),
+                                        self._nearest_vertex(end),
+                                        self.cost_distance)
+        names = []
+        for edge in pairwise(path):
+            name = self.E_name[edge]
+            # only add name to list if the list is empty
+            # or it's already the last name in the list
+            # which means the path's already on that road
+            if len(names) == 0 or name != names[-1]:
+                names.append(name)
+
+        return names
+
+def _direction(start_coords, end_coords):
+    """
+    Returns the string name of the cardinal direction of
+    an edge that starts at start_coords and ends at end_coords.
+
+    Both parameters should be tuples of form (lat, lon).
+
+    Only covers the four cardinal directions, preferring North or 
+    South over East or West.
+
+    i.e.: An edge going exactly NW will return as North.
+
+    >>> _direction((0.0, 0.0), (1.0, 0.0))
+    'North'
+    >>> _direction((1.0, 0.0), (0.0, 0.0))
+    'South'
+    >>> _direction((-1.0, 0.0), (0.0, 2.0))
+    'East'
+    >>> _direction((0.0, 0.0), (2.0, 2.0))
+    'North'
+    """
+    pass
 
     ######################################
 
