@@ -46,18 +46,21 @@ class RoadNetwork:
     Go West on 3 to 4.
     >>> print(roads.route_directions((0.0, 0.0), (0.0, -2.0)))
     Go North on 1 to 4.
-    Go South on 4 to 5.
+    Go West on 4 to 5.
     >>> print(roads.route_directions((0.0, -2.0), (0.0, 0.0)))
     Go East on 5 to 1.
     >>> print(roads.route_directions((-1.0, 0.0), (0.0, -2.0)))
-    Go North on 2 to 3.
-    Go North on 3 to 4.
-    Go South on 4 to 5.
+    Go East on 2 to 3.
+    Go West on 3 to 4.
+    Go West on 4 to 5.
 
     >>> roads = RoadNetwork('edmonton_roads.txt')
     >>> roads.route_names((53.58048, -113.52568), (53.56784,-113.52516))
     ['121 Street  North-west', '121 Street  North-west; 121 Street NW', 'Kingsway Avenue  North-west; Kingsway Avenue NW']
-
+    >>> print(roads.route_directions((53.58048, -113.52568), (53.56784,-113.52516)))
+    Go South on 121 Street  North-west.
+    Go South on 121 Street  North-west; 121 Street NW.
+    Go East on Kingsway Avenue  North-west; Kingsway Avenue NW.
     """
     
     def __init__(self, mapfilename):
@@ -134,7 +137,7 @@ class RoadNetwork:
         same road it should only output that road name once.
 
         So instead of:
-        [ '111 Ave NW', 
+        [ '111 Ave NW',
           '111 Ave NW',
           '111 Ave NW',
           '99 St Ave',
@@ -142,7 +145,7 @@ class RoadNetwork:
           'Jasper Ave NW' ]
 
         It should return:
-        [ '111 Ave NW', 
+        [ '111 Ave NW',
           '99 St Ave',
           'Jasper Ave NW' ]
         """
@@ -178,22 +181,28 @@ class RoadNetwork:
         This specific implementation prefers North or South over East or
         West.
         """
-        pass
-
         path = digraph.least_cost_path(self.graph,
                                         self._nearest_vertex(start),
                                         self._nearest_vertex(end),
                                         self.cost_distance)
-        names = []
+
+        directions = ''
+        last_name = ''
         for edge in pairwise(path):
             name = self.E_name[edge]
-            # only add name to list if the list is empty
-            # or it's already the last name in the list
-            # which means the path's already on that road
-            if len(names) == 0 or name != names[-1]:
-                names.append(name)
 
-        return names
+            # only add road to string if it's changed to a different road
+            if name != last_name:
+                start_coord = self.V_coord[edge[0]]
+                end_coord = self.V_coord[edge[1]]
+                edge_dir = _direction(start_coord, end_coord)
+
+                line = 'Go {} on {}.\n'.format(edge_dir, name)
+
+                directions = directions + line
+                last_name = name
+
+        return directions.strip()
 
 def _direction(start_coords, end_coords):
     """
