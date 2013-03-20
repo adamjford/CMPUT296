@@ -1,0 +1,38 @@
+def exp_eval(t):
+    """
+
+    >>> exp_eval( [ 42 ] )
+    42
+    >>> exp_eval( [ '*', [ '+', [1], [2] ], [ '+', [3], [4]]] )
+    21
+    """
+    if len(t) == 1:
+        return t[0]
+
+    op = t[0]
+    lhs = exp_eval(t[1])
+    rhs = exp_eval(t[2])
+
+    if op == '+':
+        return lhs + rhs
+
+    if op == '*':
+        return lhs * rhs
+
+def unparse(t):
+    """
+    >>> unparse( [ '*', [ '+', [1], [2] ], [ '+', [3], [4]]] )
+    '((1+2)*(3+4))'
+    """
+    if len(t) == 1:
+        return str(t[0])
+
+    op = t[0]
+    lhs = unparse(t[1])
+    rhs = unparse(t[2])
+
+    return '({}{}{})'.format(lhs, op, rhs)
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
