@@ -36,7 +36,7 @@ class Defender(MoveEnhanced):
             print("Defender", self._name)
 
     def get_author(self):
-        return "Your names go here"
+        return "Adam Ford"
 
     def compute_next_move(self):
         delta_x = 0
