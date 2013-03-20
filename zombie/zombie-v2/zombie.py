@@ -10,14 +10,14 @@ import defender
 class Zombie(MoveEnhanced):
 
     def __init__(self, **keywords):
-        MoveEnhanced.__init__(self, **keywords)
+        super().__init__(**keywords)
         self.set_happiness(1)
 
         if agentsim.debug.get(2):
             print("Zombie", self._name)
 
     def get_author(self):
-        return "Your names go here"
+        return "Adam Ford"
 
     def compute_next_move(self):
         if agentsim.debug.get(128):

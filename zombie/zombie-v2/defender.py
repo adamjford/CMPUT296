@@ -30,7 +30,7 @@ class Defender(MoveEnhanced):
     """
 
     def __init__(self, **keywords):
-        MoveEnhanced.__init__(self, **keywords)
+        super().__init__(**keywords)
 
         if agentsim.debug.get(2):
             print("Defender", self._name)

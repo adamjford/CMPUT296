@@ -12,8 +12,7 @@ import defender
 class Normal(MoveEnhanced):
 
     def __init__(self, **keywords):
-
-        MoveEnhanced.__init__(self, **keywords)
+        super().__init__(**keywords)
 
         # this records the information from the most recent
         # zombie alert move.  When compute_next_move() is called, 
@@ -28,7 +27,7 @@ class Normal(MoveEnhanced):
         self.set_size(random.uniform(self.get_min_size(), self.get_max_size()))
 
     def get_author(self):
-        return "Your names go here"
+        return "Adam Ford"
 
     def compute_next_move(self):
         # if we have a pending zombie alert, act on that first
