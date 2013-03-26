@@ -31,21 +31,44 @@ class Normal(MoveEnhanced):
         return "Adam Ford"
 
     def compute_next_move(self):
-        # if we have a pending zombie alert, act on that first
-        if self._zombie_alert_args is not None:
+        overlapping = False
+
+        # check if we're overlapping with anyone and move off
+        everyone = Person.get_all_present_instances()
+
+        if len(everyone) > 1:
+            nearest = min(
+                # make pairs of (person, distance from self to person)
+                [ (p, self.distances_to(p) ) for p in everyone if p.get_id() != self.get_id()]
+                ,
+                # and sort by edge-to-edge distance
+                key=(lambda x: x[1][3])
+                )
+
+            (d, delta_x, delta_y, d_edge_edge) = nearest[1]
+
+            if d > 0 and d_edge_edge < 0:
+                # Means we're overlapping with the nearest person
+                # Let's move directly away from them and hope they'll
+                # do the same
+                overlapping = True
+
+                # move in exactly the opposite direction of person
+                # with which we're overlapping but move maximum
+                # distance allowed
+                # We'll still be stuck if move_limit isn't far enough
+                # to fix overlap
+                move_limit = self.get_move_limit()
+                delta_x = -delta_x * (move_limit/d)
+                delta_y = -delta_y * (move_limit/d)
+
+        # if we have a pending zombie alert, act on that if we're not overlapping
+        if not overlapping and self._zombie_alert_args is not None:
             (x, y) = self._zombie_alert_args
             delta_x = x - self.get_xpos()
             delta_y = y - self.get_ypos()
             # clear the alert
-            self._zombie_alert_args = None 
-        else:
-            delta_x = 10 * (0.5 - random.random())
-            delta_y = 10 * (0.5 - random.random())
-
-        # and change happiness
-        delta_h = 0.5 * (0.5 - random.random())
-        self.set_happiness(delta_h + self.get_happiness())
-
+            self._zombie_alert_args = None
 
         return (delta_x, delta_y)
 
