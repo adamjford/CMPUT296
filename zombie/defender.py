@@ -41,43 +41,88 @@ class Defender(MoveEnhanced):
     def compute_next_move(self):
         delta_x = 0
         delta_y = 0
+        overlapping = False
 
-        # find nearest zombie if there is one!
-        all_z = zombie.Zombie.get_all_present_instances()
-        if all_z:
+        # check if we're overlapping with anyone and move off
+        # no need to check for zombies as we'll just teleport them instead
+
+        defenders = Defender.get_all_present_instances()
+        normals = normal.Normal.get_all_present_instances()
+
+        non_zombies = defenders + normals
+
+        if len(non_zombies) > 1:
             nearest = min(
                 # make pairs of (person, distance from self to person)
-                [ (z, self.distances_to(z)[0] ) for z in all_z ]
+                [ (p, self.distances_to(p) ) for p in non_zombies if p.get_id() != self.get_id()]
                 ,
-                # and sort by distance
-                key=(lambda x: x[1])
+                # and sort by edge-to-edge distance
+                key=(lambda x: x[1][3])
                 )
 
-            (near_z, near_d) = nearest
+            (d, delta_x, delta_y, d_edge_edge) = nearest[1]
 
-            # move towards nearest zombie
-            (d, delta_x, delta_y, d_edge_edge) = self.distances_to(near_z)
+            if d > 0 and d_edge_edge < 0:
+                # Means we're overlapping with the nearest person
+                # Let's move directly away from them
+                overlapping = True
 
-            if agentsim.debug.get(64):
-                print("nearest zombie to {} is {}, dx {} dy {}".format(
-                    self.get_name(), near_z.get_name(), delta_x, delta_y, d_edge_edge))
+                # move in exactly the opposite direction of person
+                # with which we're overlapping but move maximum
+                # distance allowed
+                # We'll still be stuck if move_limit isn't far enough
+                # to fix overlap
+                move_limit = self.get_move_limit()
+                delta_x = -delta_x * (move_limit/d)
+                delta_y = -delta_y * (move_limit/d)
 
-            # but if close enough to teleport, send the zombie to a random
-            # point instead
-            if d_edge_edge <= self.get_teleport_threshold() :
-                (x_min, y_min, x_max, y_max) = agentsim.gui.get_canvas_coords()
-                x = random.randint(x_min, x_max)
-                y = random.randint(y_min, y_max)
-                self.teleport(near_z, x, y)
+        if not overlapping:
+            # find nearest zombie if there is one!
+            all_z = zombie.Zombie.get_all_present_instances()
+            if all_z:
+                nearest = min(
+                    # make pairs of (person, distance from self to person)
+                    [ (z, self.distances_to(z)[0] ) for z in all_z ]
+                    ,
+                    # and sort by distance
+                    key=(lambda x: x[1])
+                    )
 
-            # and change happiness proportional to distance
-            (w,h) = agentsim.gui.get_canvas_size()
-            diag = (w*w + h*h) ** .5
-            delta_h = min( d/diag, .05)
-            if agentsim.debug.get(64):
-                print("d", d, "diag", diag, "dh", delta_h)
+                (near_z, near_d) = nearest
 
-            self.set_happiness(delta_h + self.get_happiness())
+                # move towards nearest zombie
+                (d, delta_x, delta_y, d_edge_edge) = self.distances_to(near_z)
+
+                if agentsim.debug.get(64):
+                    print("nearest zombie to {} is {}, dx {} dy {}".format(
+                        self.get_name(), near_z.get_name(), delta_x, delta_y, d_edge_edge))
+
+                d_edge_edge = round(d_edge_edge, 3)
+
+                # but if close enough to teleport, send the zombie to a random
+                # point instead
+                if d_edge_edge <= self.get_teleport_threshold() :
+                    (x_min, y_min, x_max, y_max) = agentsim.gui.get_canvas_coords()
+                    x = random.randint(x_min, x_max)
+                    y = random.randint(y_min, y_max)
+                    self.teleport(near_z, x, y)
+
+                if self.get_move_limit() > d_edge_edge:
+                    # if the distance between my edge and the target's edge is smaller than
+                    # the move limit, need to reduce delta_x and delta_y so we go right to
+                    # edge
+
+                    delta_x = delta_x * d_edge_edge/d
+                    delta_y = delta_y * d_edge_edge/d
+
+                # and change happiness proportional to distance
+                (w,h) = agentsim.gui.get_canvas_size()
+                diag = (w*w + h*h) ** .5
+                delta_h = min( d/diag, .05)
+                if agentsim.debug.get(64):
+                    print("d", d, "diag", diag, "dh", delta_h)
+
+                self.set_happiness(delta_h + self.get_happiness())
 
         # alert the normals
         for n in normal.Normal.get_all_present_instances():
