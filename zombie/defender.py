@@ -69,7 +69,7 @@ class Defender(MoveEnhanced):
                 # Keep trying to teleport the zombie near the desired corner until it actually sticks
                 # The range increases with each attempt
                 # This construct somewhat emulates a C do...while loop
-                # Will stop after X amount of loops to prevent an infinite one
+                # Will stop after X amount of iteration to prevent an infinite loop
                 while True:
                     x = random.randint(corner_x - range_x, corner_x) if x_descending else random.randint(corner_x, corner_x + range_x)
                     y = random.randint(corner_y - range_y, corner_y) if y_descending else random.randint(corner_y, corner_y + range_y)
