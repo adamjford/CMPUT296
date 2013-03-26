@@ -26,8 +26,10 @@ import normal
 
 class Defender(MoveEnhanced):
     """
-    Goes around attempting to prevent zombies form reaching normals
+    Goes around attempting to prevent zombies from reaching normals
     """
+
+    _random_corner = None
 
     def __init__(self, **keywords):
         MoveEnhanced.__init__(self, **keywords)
@@ -73,8 +75,8 @@ class Defender(MoveEnhanced):
                 # We'll still be stuck if move_limit isn't far enough
                 # to fix overlap
                 move_limit = self.get_move_limit()
-                delta_x = -delta_x * (move_limit/d)
-                delta_y = -delta_y * (move_limit/d)
+                delta_x = -delta_x * move_limit/d
+                delta_y = -delta_y * move_limit/d
 
         if not overlapping:
             # find nearest zombie if there is one!
@@ -124,8 +126,21 @@ class Defender(MoveEnhanced):
 
                 self.set_happiness(delta_h + self.get_happiness())
 
-        # alert the normals
+        # alert the normals to huddle in random corner
         for n in normal.Normal.get_all_present_instances():
-            n.zombie_alert(0, 0)
+            (x_min, y_min, x_max, y_max) = agentsim.gui.get_canvas_coords()
+
+            if Defender._random_corner is None:
+                dict = {
+                        0: (x_min, y_min),
+                        1: (x_max, y_min),
+                        2: (x_max, y_max),
+                        3: (x_min, y_max)
+                }
+
+                Defender._random_corner = dict[random.randint(0, 3)]
+
+            random_corner = Defender._random_corner
+            n.zombie_alert(random_corner[0], random_corner[1])
 
         return (delta_x, delta_y)
