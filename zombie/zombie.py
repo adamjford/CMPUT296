@@ -82,11 +82,13 @@ class Zombie(MoveEnhanced):
 
                 if self.get_move_limit() > d_edge_edge:
                     # if the distance between my edge and the target's edge is smaller than
-                    # the move limit, need to reduce delta_x and delta_y so we go right to
-                    # edge
+                    # the move limit, need to reduce delta_x and delta_y so we get as close
+                    # to edge as possible
 
-                    delta_x = delta_x * d_edge_edge/d
-                    delta_y = delta_y * d_edge_edge/d
+                    new_d = d_edge_edge - self.get_touching_threshold()
+
+                    delta_x = delta_x * new_d/d
+                    delta_y = delta_y * new_d/d
 
                 # and change happiness proportional to distance
                 (w,h) = agentsim.gui.get_canvas_size()

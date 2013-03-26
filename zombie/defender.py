@@ -69,15 +69,17 @@ class Defender(MoveEnhanced):
                 # Keep trying to teleport the zombie near the desired corner until it actually sticks
                 # The range increases with each attempt
                 # This construct somewhat emulates a C do...while loop
+                # Will stop after X amount of loops to prevent an infinite one
                 while True:
                     x = random.randint(corner_x - range_x, corner_x) if x_descending else random.randint(corner_x, corner_x + range_x)
                     y = random.randint(corner_y - range_y, corner_y) if y_descending else random.randint(corner_y, corner_y + range_y)
                     self.teleport(near_z, x, y)
-                    if round(self.distances_to(near_z)[3],3) > self.get_teleport_threshold():
+
+                    if round(self.distances_to(near_z)[3],3) > self.get_teleport_threshold() or range_x > 250:
                         break
                     else:
-                        range_x = range_x + 1
-                        range_y = range_y + 1
+                        range_x = range_x + 5
+                        range_y = range_y + 5
 
         # check if we're overlapping with anyone and move off
         # no need to check for zombies as we've already teleported them away
@@ -112,8 +114,8 @@ class Defender(MoveEnhanced):
                 delta_x = -delta_x * move_limit/d
                 delta_y = -delta_y * move_limit/d
 
+        # If we're not overlapping anyone, check up on the zombies and see if we should chase one
         if not overlapping:
-            # Check up on the zombies and see if we should chase one
             all_z = zombie.Zombie.get_all_present_instances()
             if all_z:
                 nearest = min(
@@ -126,8 +128,11 @@ class Defender(MoveEnhanced):
 
                 (near_z, near_d) = nearest
 
+                (x_min, y_min, x_max, y_max) = agentsim.gui.get_canvas_coords()
+                max_d = ((x_max - x_min) ** 2 + (y_max - y_min) ** 2) ** 0.5
+
                 # if there's a zombie nearby, chase it down
-                if near_d[0] <= 200:
+                if near_d[0] <= (max_d/2):
                     (d, delta_x, delta_y, d_edge_edge) = self.distances_to(near_z)
 
                     if agentsim.debug.get(64):
@@ -138,14 +143,15 @@ class Defender(MoveEnhanced):
 
                     if self.get_move_limit() > d_edge_edge:
                         # if the distance between my edge and the target's edge is smaller than
-                        # the move limit, need to reduce delta_x and delta_y so we go right to
-                        # edge
+                        # the move limit, need to reduce delta_x and delta_y so we get as close
+                        # to edge as possible
 
-                        delta_x = delta_x * d_edge_edge/d
-                        delta_y = delta_y * d_edge_edge/d
+                        new_d = d_edge_edge - (self.get_touching_threshold() + near_z.get_touching_threshold())/2
+
+                        delta_x = delta_x * new_d/d
+                        delta_y = delta_y * new_d/d
                 else:
                     # No zombies nearby, so move to the middle to defend from zombies teleported to corner
-                    (x_min, y_min, x_max, y_max) = agentsim.gui.get_canvas_coords()
                     x_mid = (x_min + x_max)/2
                     y_mid = (y_min + y_max)/2
 
