@@ -29,7 +29,8 @@ class Defender(MoveEnhanced):
     Goes around attempting to prevent zombies from reaching normals
     """
 
-    _random_corner = None
+    _normal_corner = None
+    _zombie_corner = None
 
     def __init__(self, **keywords):
         MoveEnhanced.__init__(self, **keywords)
@@ -45,8 +46,41 @@ class Defender(MoveEnhanced):
         delta_y = 0
         overlapping = False
 
+        # First, find all zombies within teleporting range and get 'em outta here
+        all_z = zombie.Zombie.get_all_present_instances()
+        if all_z:
+            zombies_with_range = [ (z, self.distances_to(z)) for z in all_z ]
+            zombies_in_range = [ t for t in zombies_with_range if round(t[1][3],3) <= self.get_teleport_threshold() ]
+
+            for t in zombies_in_range:
+                (near_z, distances) = t
+                (d, delta_x, delta_y, d_edge_edge) = distances
+
+                d_edge_edge = round(d_edge_edge, 3)
+
+                corner = Defender._zombie_corner
+                (corner_x, corner_y) = corner
+                x_descending = corner_x != 0
+                y_descending = corner_y != 0
+
+                range_x = 0
+                range_y = 0
+
+                # Keep trying to teleport the zombie near the desired corner until it actually sticks
+                # The range increases with each attempt
+                # This construct somewhat emulates a C do...while loop
+                while True:
+                    x = random.randint(corner_x - range_x, corner_x) if x_descending else random.randint(corner_x, corner_x + range_x)
+                    y = random.randint(corner_y - range_y, corner_y) if y_descending else random.randint(corner_y, corner_y + range_y)
+                    self.teleport(near_z, x, y)
+                    if round(self.distances_to(near_z)[3],3) > self.get_teleport_threshold():
+                        break
+                    else:
+                        range_x = range_x + 1
+                        range_y = range_y + 1
+
         # check if we're overlapping with anyone and move off
-        # no need to check for zombies as we'll just teleport them instead
+        # no need to check for zombies as we've already teleported them away
 
         defenders = Defender.get_all_present_instances()
         normals = normal.Normal.get_all_present_instances()
@@ -79,43 +113,44 @@ class Defender(MoveEnhanced):
                 delta_y = -delta_y * move_limit/d
 
         if not overlapping:
-            # find nearest zombie if there is one!
+            # Check up on the zombies and see if we should chase one
             all_z = zombie.Zombie.get_all_present_instances()
             if all_z:
                 nearest = min(
                     # make pairs of (person, distance from self to person)
-                    [ (z, self.distances_to(z)[0] ) for z in all_z ]
+                    [ (z, self.distances_to(z) ) for z in all_z ]
                     ,
                     # and sort by distance
-                    key=(lambda x: x[1])
+                    key=(lambda x: x[1][0])
                     )
 
                 (near_z, near_d) = nearest
 
-                # move towards nearest zombie
-                (d, delta_x, delta_y, d_edge_edge) = self.distances_to(near_z)
+                # if there's a zombie nearby, chase it down
+                if near_d[0] <= 200:
+                    (d, delta_x, delta_y, d_edge_edge) = self.distances_to(near_z)
 
-                if agentsim.debug.get(64):
-                    print("nearest zombie to {} is {}, dx {} dy {}".format(
-                        self.get_name(), near_z.get_name(), delta_x, delta_y, d_edge_edge))
+                    if agentsim.debug.get(64):
+                        print("nearest zombie to {} is {}, dx {} dy {}".format(
+                            self.get_name(), near_z.get_name(), delta_x, delta_y, d_edge_edge))
 
-                d_edge_edge = round(d_edge_edge, 3)
+                    d_edge_edge = round(d_edge_edge, 3)
 
-                # but if close enough to teleport, send the zombie to a random
-                # point instead
-                if d_edge_edge <= self.get_teleport_threshold() :
+                    if self.get_move_limit() > d_edge_edge:
+                        # if the distance between my edge and the target's edge is smaller than
+                        # the move limit, need to reduce delta_x and delta_y so we go right to
+                        # edge
+
+                        delta_x = delta_x * d_edge_edge/d
+                        delta_y = delta_y * d_edge_edge/d
+                else:
+                    # No zombies nearby, so move to the middle to defend from zombies teleported to corner
                     (x_min, y_min, x_max, y_max) = agentsim.gui.get_canvas_coords()
-                    x = random.randint(x_min, x_max)
-                    y = random.randint(y_min, y_max)
-                    self.teleport(near_z, x, y)
+                    x_mid = (x_min + x_max)/2
+                    y_mid = (y_min + y_max)/2
 
-                if self.get_move_limit() > d_edge_edge:
-                    # if the distance between my edge and the target's edge is smaller than
-                    # the move limit, need to reduce delta_x and delta_y so we go right to
-                    # edge
-
-                    delta_x = delta_x * d_edge_edge/d
-                    delta_y = delta_y * d_edge_edge/d
+                    delta_x = x_mid - self.get_xpos()
+                    delta_y = y_mid - self.get_ypos()
 
                 # and change happiness proportional to distance
                 (w,h) = agentsim.gui.get_canvas_size()
@@ -127,10 +162,15 @@ class Defender(MoveEnhanced):
                 self.set_happiness(delta_h + self.get_happiness())
 
         # alert the normals to huddle in random corner
+        # Defenders are all going to teleport zombies to the other corner
         for n in normal.Normal.get_all_present_instances():
             (x_min, y_min, x_max, y_max) = agentsim.gui.get_canvas_coords()
 
-            if Defender._random_corner is None:
+            if Defender._normal_corner is None:
+                # using a dictionary here for logic switching
+                # because an if/then construct would have been long
+                # and contained redundancies
+
                 dict = {
                         0: (x_min, y_min),
                         1: (x_max, y_min),
@@ -138,9 +178,12 @@ class Defender(MoveEnhanced):
                         3: (x_min, y_max)
                 }
 
-                Defender._random_corner = dict[random.randint(0, 3)]
+                i = random.randint(0, 3)
 
-            random_corner = Defender._random_corner
-            n.zombie_alert(random_corner[0], random_corner[1])
+                Defender._normal_corner = dict[i]
+                Defender._zombie_corner = dict[(i+2) % 4]
+
+            corner = Defender._normal_corner
+            n.zombie_alert(corner[0], corner[1])
 
         return (delta_x, delta_y)
