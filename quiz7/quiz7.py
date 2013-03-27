@@ -261,11 +261,10 @@ def is_equivalent(t1, t2):
         return True
 
     # (a op b) and (b op a) are also equivalent when op is commutative
-    if op1 in commutative_operators:
-        pass
+    if op1 in commutative_operators and is_equivalent(lhs1, rhs2) and is_equivalent(rhs1, lhs2):
+        return True
 
     return False
-
 
 def simplify_commute(t):
     """
