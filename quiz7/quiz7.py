@@ -308,6 +308,21 @@ def simplify_commute(t):
     # rebuild the same tree node as we had originally
     return [op, lhs, rhs]
 
+def simplify_sub(t):
+    """
+    Takes an expression tree t and simplifies it by replacing sub expressions
+    of the form ['-', t1, t2] to [0] when t1 and t2 are equivalent
+
+    >>> simplify_sub(PPN_parse(str_to_tokens("- 1 1")))
+    [0]
+    >>> simplify_sub(PPN_parse(str_to_tokens("- + 2 1 + 1 2")))
+    [0]
+    >>> simplify_sub(PPN_parse(str_to_tokens("- * 5 2 // 10 2")))
+    ['-', ['*', [5], [2]], ['//', [10], [2]]]
+    """
+    pass
+    
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
