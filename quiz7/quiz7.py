@@ -283,6 +283,12 @@ def simplify_commute(t):
     >>> simplify_commute(PPN_parse(str_to_tokens("+ + + A B + A B + + A B + B A")))
     ['*', [2], ['*', [2], ['+', ['A'], ['B']]]]
 
+    >>> simplify_commute(PPN_parse(str_to_tokens("+ % A B % A B")))
+    ['*', [2], ['%', ['A'], ['B']]]
+
+    >>> simplify_commute(PPN_parse(str_to_tokens("+ % A B % B A")))
+    ['+', ['%', ['A'], ['B']], ['%', ['B'], ['A']]]
+
     """
 
     if len(t) <= 1: return t
