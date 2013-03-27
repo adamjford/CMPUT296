@@ -302,11 +302,11 @@ def simplify_commute(t):
     # and if they match return the tree that decsribes (2 * lhs)
 
     if op == '+' and is_equivalent(lhs, rhs) :
-        pass
-    
+        (lhs, rhs) = ([2], lhs)
+        op = '*'
+
     # rebuild the same tree node as we had originally
     return [op, lhs, rhs]
-
 
 if __name__ == "__main__":
     import doctest
