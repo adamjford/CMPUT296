@@ -187,19 +187,25 @@ def exp_eval(t, sym_table = None):
     >>> exp_eval( ['+', ['=', ['x'], [2]], ['=', ['y'], [2]]])
     0
 
-    >>> exp_eval( ['if', ['1'], ['1'], ['0']])
+    >>> exp_eval( ['if', [1], [1], [0]])
     1
 
-    >>> exp_eval( ['if', ['0'], ['1'], ['0']])
+    >>> exp_eval( ['if', [0], [1], [0]])
     0
 
-    >>> exp_eval( ['if', ['=', ['x'], ['5']], ['0'], ['x']])
+    >>> exp_eval( ['if', [True], [5], [10]])
     5
 
-    >>> exp_eval( ['if', [1], ['=', ['x'], ['5']], ['x']])
+    >>> exp_eval( ['if', [False], [5], [10]])
+    10
+
+    >>> exp_eval( ['if', ['=', ['x'], [5]], ['0'], ['x']])
+    5
+
+    >>> exp_eval( ['if', [1], ['=', ['x'], [5]], ['x']])
     0
 
-    >>> exp_eval( ['if', [1], ['=', ['x'], ['5']], ['x']])
+    >>> exp_eval( ['if', [0], ['=', ['x'], [5]], ['x']])
     'x'
 
     """
@@ -219,6 +225,11 @@ def exp_eval(t, sym_table = None):
 
     # fetch the parts of the expression
     op = t[0]
+
+    if op == 'if':
+        cond = exp_eval(t[1], sym_table)
+        i = 2 if cond else 3
+        return exp_eval(t[i], sym_table)
 
     # evaluate the sub-expressions
     lhs = exp_eval(t[1], sym_table)
