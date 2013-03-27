@@ -234,6 +234,12 @@ def is_equivalent(t1, t2):
     >>> is_equivalent([ '+', [42], [1] ], [ '+', [1], [42] ])
     True
 
+    >>> is_equivalent([ '*', [ '+', [42], [1] ], [5] ], [ '*', [5], [ '+', [1], [42] ] ])
+    True
+
+    >>> is_equivalent([ '*', [ '+', [42], [1] ], [5] ], [ '*', [5], [ '+', [2], [42] ] ])
+    False
+
     >>> is_equivalent(PPN_parse(str_to_tokens("+ + A B + A B + + A B + B A")), PPN_parse(str_to_tokens("+ + A B + B A + + A B + A B")) )
     True
     """
