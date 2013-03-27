@@ -313,6 +313,8 @@ def simplify_sub(t):
     Takes an expression tree t and simplifies it by replacing sub expressions
     of the form ['-', t1, t2] to [0] when t1 and t2 are equivalent
 
+    >>> simplify_sub(PPN_parse(str_to_tokens("2")))
+    [2]
     >>> simplify_sub(PPN_parse(str_to_tokens("- 1 1")))
     [0]
     >>> simplify_sub(PPN_parse(str_to_tokens("- + 2 1 + 1 2")))
@@ -320,8 +322,21 @@ def simplify_sub(t):
     >>> simplify_sub(PPN_parse(str_to_tokens("- * 5 2 // 10 2")))
     ['-', ['*', [5], [2]], ['//', [10], [2]]]
     """
-    pass
-    
+
+    if len(t) <= 1: return t
+
+    (op, lhs, rhs) = t
+
+    lhs = simplify_sub(lhs)
+    rhs = simplify_sub(rhs)
+
+    # check for - and exact match of lhs and rhs,
+    # and if they match return [0]
+    if op == '-' and is_equivalent(lhs, rhs):
+        return [0]
+
+    # rebuild the same tree node as we had originally
+    return [op, lhs, rhs]
 
 if __name__ == "__main__":
     import doctest
