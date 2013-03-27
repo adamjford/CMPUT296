@@ -172,7 +172,7 @@ def exp_eval(t, sym_table = None):
     >>> exp_eval( [ '*', [ '//', [50], [10] ], [ '+', [3], [4]]] )
     35
 
-    >>> exp_eval( [ '%', [6], ['//', [20], [4]] )
+    >>> exp_eval( [ '%', [6], ['//', [20], [4]]] )
     1
 
     """
@@ -200,8 +200,17 @@ def exp_eval(t, sym_table = None):
     if op == '+':
         return lhs + rhs
 
+    if op == '-':
+        return lhs - rhs
+
     if op == '*':
         return lhs * rhs
+
+    if op == '//':
+        return lhs // rhs
+
+    if op == '%':
+        return lhs % rhs
 
     raise Exception("Unknown operator '{}'".format(op))
 
