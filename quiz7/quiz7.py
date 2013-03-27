@@ -175,6 +175,33 @@ def exp_eval(t, sym_table = None):
     >>> exp_eval( [ '%', [6], ['//', [20], [4]]] )
     1
 
+    >>> exp_eval( ['+', ['=', ['x'], [2]], ['+', ['x'], [3]]])
+    5
+
+    >>> exp_eval( ['=', ['x'], ['5']])
+    0
+
+    >>> exp_eval( ['+', ['x'], ['y']])
+    'xy'
+
+    >>> exp_eval( ['+', ['=', ['x'], [2]], ['=', ['y'], [2]]])
+    0
+
+    >>> exp_eval( ['if', ['1'], ['1'], ['0']])
+    1
+
+    >>> exp_eval( ['if', ['0'], ['1'], ['0']])
+    0
+
+    >>> exp_eval( ['if', ['=', ['x'], ['5']], ['0'], ['x']])
+    5
+
+    >>> exp_eval( ['if', [1], ['=', ['x'], ['5']], ['x']])
+    0
+
+    >>> exp_eval( ['if', [1], ['=', ['x'], ['5']], ['x']])
+    'x'
+
     """
     if sym_table is None:
         sym_table = { }
@@ -211,6 +238,10 @@ def exp_eval(t, sym_table = None):
 
     if op == '%':
         return lhs % rhs
+
+    if op == '=':
+        sym_table[lhs] = rhs
+        return 0
 
     raise Exception("Unknown operator '{}'".format(op))
 
